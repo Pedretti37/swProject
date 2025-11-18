@@ -2,7 +2,7 @@ package application.view;
 
 import java.io.IOException;
 
-import application.MessageUtils;
+import application.admin.MessageUtils;
 import application.controller.MailController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -41,18 +41,10 @@ public class Navigator {
 	public void switchToDiabetologoPage(ActionEvent event) throws IOException {
 		loadScene("/resources/fxml/DiabetologoPage.fxml");
 	}
-	
-	public void switchToProfiloDiabetologo(ActionEvent event) throws IOException {
-		loadScene("/resources/fxml/ProfiloDiabetologo.fxml");
-	}
 			
 	//----------------------------------------------------------------------
 	public void switchToPazientePage(ActionEvent event) throws IOException {
 		loadScene("/resources/fxml/PazientePage.fxml");
-	}
-	
-	public void switchToProfiloPaziente(ActionEvent event) throws IOException {
-		loadScene("/resources/fxml/ProfiloPaziente.fxml");
 	}
 	
 	//------------------------------------------------------------------------------------
@@ -80,14 +72,18 @@ public class Navigator {
 	public void switchToRispondi(Event event, String mail, String oggetto) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/MailPage.fxml"));
         Parent root = loader.load();
-        setScene(root);
 		MailController mailController = loader.getController();
 		mailController.rispondi(mail, oggetto);
+        setScene(root);
 	}
 	
 	//--------------------------------------------------------------------------
 	public void switchToQuestionarioPage(ActionEvent event) throws IOException {
 		loadScene("/resources/fxml/QuestionarioPage.fxml");
+	}
+
+	public void switchVediQuestionario(Event event) throws IOException {
+		loadScene("/resources/fxml/VediQuestionario.fxml");
 	}
 	
 	//----------------------------------------------------------------------
