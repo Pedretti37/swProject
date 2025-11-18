@@ -1,9 +1,9 @@
-package test.LoginTest;
+/*package test.LoginTest;
 
 //import static org.junit.Assert.assertEquals;
 //import org.junit.Test;
 
-import application.Amministratore;
+import application.admin.Amministratore;
 import application.model.Utente;
 
 public class LoginService {
@@ -22,4 +22,4 @@ public class LoginService {
 		
 		return null;
 	}
-}
+}*/

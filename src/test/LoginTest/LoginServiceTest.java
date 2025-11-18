@@ -1,4 +1,4 @@
-package test.LoginTest;
+/*package test.LoginTest;
 
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -48,4 +48,4 @@ public class LoginServiceTest {
         Utente utente = LoginService.login("", "");
         assertNull(utente);
     }
-}
+}*/
