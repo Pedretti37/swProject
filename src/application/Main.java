@@ -1,5 +1,6 @@
 package application;
 
+import application.admin.Amministratore;
 import application.view.Navigator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
