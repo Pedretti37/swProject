@@ -12,10 +12,10 @@ public class Terapia {
 	private LocalDate dataInizio;
 	private LocalDate dataFine;
 	private String indicazioni;
-	private String modificato;
+	private String diabetologo;
 	private boolean visualizzata;
 	
-	public Terapia(int id, String cf, String nomeFarmaco, int dosiGiornaliere, int quantità, LocalDate dataInizio, LocalDate dataFine, String indicazioni, String modificato, boolean visualizzata) {
+	public Terapia(int id, String cf, String nomeFarmaco, int dosiGiornaliere, int quantità, LocalDate dataInizio, LocalDate dataFine, String indicazioni, String diabetologo, boolean visualizzata) {
 		this.id = id;
 		this.cf = cf;
 		this.nomeFarmaco = nomeFarmaco;
@@ -24,12 +24,16 @@ public class Terapia {
 		this.dataInizio = dataInizio;
 		this.dataFine = dataFine;
 		this.indicazioni = indicazioni;
-		this.modificato = modificato;
+		this.diabetologo = diabetologo;
 		this.visualizzata = visualizzata;
 	}
 	
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public String getCf() {
@@ -60,8 +64,8 @@ public class Terapia {
 		return indicazioni;
 	}
 	
-	public String getModificato() {
-		return modificato;
+	public String getDiabetologo() {
+		return diabetologo;
 	}
 	
 	public boolean getVisualizzata() {

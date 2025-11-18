@@ -1,5 +1,8 @@
 package application.model;
 
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class Utente {
@@ -10,18 +13,18 @@ public class Utente {
 	private String nomeCognome;
 	private LocalDate dataDiNascita;
 	private String sesso;
-	private String path;
+	private Blob foto;
 	private String mail;
 	private String diabetologoRif;
 	
-	public Utente(String cf, String pw, String ruolo, String nomeCognome, LocalDate dataDiNascita, String sesso, String path, String mail, String diabetologoRif) {
+	public Utente(String cf, String pw, String ruolo, String nomeCognome, LocalDate dataDiNascita, String sesso, Blob foto, String mail, String diabetologoRif) {
 		this.cf = cf;
 		this.pw = pw;
 		this.ruolo = ruolo;
 		this.nomeCognome = nomeCognome;
 		this.dataDiNascita = dataDiNascita;
 		this.sesso = sesso;
-		this.path = path;
+		this.foto = foto;
 		this.mail = mail;
 		this.diabetologoRif = diabetologoRif;
 	}
@@ -58,8 +61,13 @@ public class Utente {
 		return sesso;
 	}
 	
-	public String getPath() {
-		return path;
+	public InputStream getFoto() {
+		try{
+			return this.foto.getBinaryStream();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public String getMail() {
