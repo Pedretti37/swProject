@@ -9,65 +9,128 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.PazienteController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.PazienteController">
 
-    <!-- Top: Titolo centrato -->
     <top>
-        <Label fx:id="welcomeLabel" BorderPane.alignment="CENTER">
+        <Label fx:id="welcomeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Pannello Paziente" BorderPane.alignment="CENTER">
             <font>
-                <Font size="48.0" />
+                <Font name="System Bold" size="36.0" />
             </font>
+            <padding>
+                <Insets bottom="10.0" top="20.0" />
+            </padding>
         </Label>
     </top>
 
-    <!-- Center: ButtonBar centrato sopra il grafico e input -->
     <center>
-        <VBox alignment="TOP_CENTER" spacing="20.0">
+        <VBox alignment="TOP_CENTER" prefHeight="432.0" prefWidth="1280.0" spacing="20.0" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="20" left="20" right="20" top="20" />
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
 
-            <!-- ButtonBar centrato -->
             <HBox alignment="CENTER">
                 <ButtonBar>
                     <buttons>
-                        <Button onAction="#switchToProfiloPaziente" text="Profilo" />
-                       	<Button fx:id="mailButton" onAction="#switchToMailPage" text="Mail" />
-                        <Button fx:id="questButton" onAction="#switchToQuestionarioPage" text="Questionario" />
-                        <Button onAction="#switchToLogin" text="Logout" />
+                        <Button fx:id="mailButton" onAction="#switchToMailPage" prefWidth="120.0" text="✉️ Mail" />
+                        <Button fx:id="questButton" onAction="#switchToQuestionarioPage" prefWidth="120.0" text="📝 Questionario" />
+                        <Button onAction="#switchToLogin" prefWidth="120.0" style="-fx-background-color: #ff6666;" text="🚪 Logout" />
                     </buttons>
                 </ButtonBar>
             </HBox>
+            
+            <Label fx:id="statoQuestionarioOdierno" text="Stato Questionario Odierno" />
 
-            <!-- Grafico glicemia -->
-            <LineChart fx:id="graficoGlicemia" prefHeight="200.0" prefWidth="500.0" title="Valori glicemia">
+            <LineChart fx:id="graficoGlicemia" prefHeight="400.0" prefWidth="500.0" title="📈 Valori Glicemia Recenti">
                 <xAxis>
-                    <CategoryAxis label="Misurazione" side="BOTTOM" />
+                    <CategoryAxis label="Data e Ora" side="BOTTOM" />
                 </xAxis>
                 <yAxis>
-                    <NumberAxis side="LEFT" />
+                    <NumberAxis label="Glicemia (mg/dL)" side="LEFT" />
                 </yAxis>
             </LineChart>
 
-            <!-- Input glicemia -->
-            <HBox alignment="CENTER" spacing="10.0">
-                <TextField fx:id="valoreField" maxWidth="100" promptText="Valore glicemia" />
-                <ComboBox fx:id="indicazioniBox" maxWidth="130" promptText="Pre/Post pasto" />
-                <TextField fx:id="oraField" maxWidth="90" promptText="Ora" />
-                <TextField fx:id="minutiField" maxWidth="90" promptText="Minuti" />
-                <Button onAction="#handleGlicemia" text="Inserisci valore" />
+            <HBox alignment="CENTER" spacing="15.0">
+                <Label style="-fx-font-weight: bold;" text="Nuova Misurazione: " />
+                <TextField fx:id="valoreField" prefWidth="150.0" promptText="Valore Glicemia (mg/dL)" />
+                <ComboBox fx:id="indicazioniBox" editable="true" prefWidth="130.0" promptText="Pre/Post pasto" />
+                <TextField fx:id="oraField" prefWidth="60.0" promptText="Ora (HH)" />
+                <TextField fx:id="minutiField" prefHeight="25.0" prefWidth="80.0" promptText="Minuti (MM)" />
+                <Button onAction="#handleGlicemia" style="-fx-background-color: #5cb85c; -fx-text-fill: white;" text="➕ Inserisci" />
             </HBox>
 
         </VBox>
     </center>
-   <bottom>
-      <Label fx:id="statoQuestionarioOdierno" BorderPane.alignment="CENTER" />
-   </bottom>
 
+    <bottom>
+        <AnchorPane prefHeight="250.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <children>
+                <HBox layoutX="20.0" layoutY="20.0" spacing="30.0">
+                    <children>
+                        <ImageView fx:id="fotoProfilo" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: lightgray; -fx-border-width: 1;" />
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label fx:id="nomeLabel" style="-fx-font-size: 18pt; -fx-font-weight: bold;" text="Nome Paziente" />
+                                <Label fx:id="ddnLabel" text="Data di Nascita: " />
+                                <Label fx:id="sessoLabel" text="Sesso: " />
+                                <Label fx:id="diabetologoLabel" text="Diabetologo: " />
+                            </children>
+                            <HBox.margin>
+                                <Insets top="10.0" />
+                            </HBox.margin>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <VBox alignment="TOP_LEFT" layoutX="900.0" layoutY="20.0" spacing="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                    <Label fx:id="terapiaCorrente" style="-fx-font-size: 19.0; -fx-font-weight: bold;" text="💊 Terapia Corrente">
+                        <font>
+                            <Font size="19.0" />
+                        </font>
+                    </Label>
+                    <GridPane prefWidth="300.0" style="-fx-padding: 10; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-color: #f7f7f7;">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <Label style="-fx-font-weight: bold;" text="Nome farmaco:" />
+                            <Label style="-fx-font-weight: bold;" text="Dosi giornaliere:" GridPane.rowIndex="1" />
+                            <Label style="-fx-font-weight: bold;" text="Quantità:" GridPane.rowIndex="2" />
+                            <Label style="-fx-font-weight: bold;" text="Periodo:" GridPane.rowIndex="3" />
+                            <Label style="-fx-font-weight: bold;" text="Indicazioni:" GridPane.rowIndex="4" />
+                            <Label style="-fx-font-weight: bold;" text="Modificato da:" GridPane.rowIndex="5" />
+                            
+                            <Label fx:id="nomeFarmacoLabel" GridPane.columnIndex="1" />
+                            <Label fx:id="dosiGiornaliereLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            <Label fx:id="quantitàLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            <Label fx:id="periodoLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                            <Label fx:id="indicazioniLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            <Label fx:id="modificatoLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        </children>
+                    </GridPane>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </bottom>
 </BorderPane>
