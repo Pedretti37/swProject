@@ -1,46 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.TerapiaConcomitanteController">
-   <top>
-      <Label text="Terapia concomitante" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="36.0" />
-         </font>
-      </Label>
-   </top>
-   <bottom>
-      <Button mnemonicParsing="false" onAction="#switchToMostraDatiPaziente" text="Indietro" BorderPane.alignment="CENTER" />
-   </bottom>
-   <left>
-      <GridPane BorderPane.alignment="CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="127.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="473.0" minWidth="10.0" prefWidth="473.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="120.0" minHeight="10.0" prefHeight="64.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="166.0" minHeight="0.0" prefHeight="103.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="93.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="69.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Label text=" Nome: " />
-            <Label text=" Data di inizio: " GridPane.rowIndex="1" />
-            <Label text=" Data di fine: " GridPane.rowIndex="2" />
-            <Label fx:id="nomeLabel" GridPane.columnIndex="1" />
-            <Label fx:id="dataInizioLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="dataFineLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Modificato da:" GridPane.rowIndex="3" />
-            <Label fx:id="modificatoLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-         </children>
-      </GridPane>
-   </left>
+<BorderPane prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: #f7f7f7;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.TerapiaConcomitanteController">
+    
+    <top>
+        <VBox alignment="CENTER" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;">
+            <Label text="💊 Dettagli Terapia Concomitante" BorderPane.alignment="CENTER" style="-fx-text-fill: #4CAF50; -fx-font-weight: bold;">
+                <font>
+                    <Font size="32.0" />
+                </font>
+                <padding>
+                    <Insets bottom="10.0" top="15.0" />
+                </padding>
+            </Label>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox alignment="CENTER" spacing="20.0">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            
+            <GridPane hgap="20.0" vgap="20.0" maxWidth="650.0" 
+                      style="-fx-background-color: white; -fx-padding: 30; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.0, 0, 4);">
+                
+                <columnConstraints>
+                    <ColumnConstraints halignment="RIGHT" hgrow="NEVER" prefWidth="150.0" />
+                    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" prefWidth="500.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" /> <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" /> <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" /> <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" /> </rowConstraints>
+                
+                <Label text="Nome farmaco/trattamento:" style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                <Label fx:id="nomeLabel" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;" wrapText="true" />
+                
+                <Label text="Data di inizio:" GridPane.rowIndex="1" style="-fx-font-weight: bold; -fx-text-fill: #555;" />
+                <Label fx:id="dataInizioLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 14px;" wrapText="true" />
+                
+                <Label text="Data di fine (Opz.):" GridPane.rowIndex="2" style="-fx-font-weight: bold; -fx-text-fill: #555;" />
+                <Label fx:id="dataFineLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;" wrapText="true" />
+
+                <Label text="Registrato da:" GridPane.rowIndex="3" style="-fx-font-weight: bold; -fx-text-fill: #555;" />
+                <Label fx:id="modificatoLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 14px; -fx-font-style: italic;" wrapText="true" />
+                
+            </GridPane>
+        </VBox>
+    </center>
+    
+    <bottom>
+        <Button onAction="#switchToMostraDatiPaziente" text="⬅ Indietro" 
+                style="-fx-background-color: #ccc; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4;" 
+                BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="20.0" top="10.0" />
+            </BorderPane.margin>
+        </Button>
+    </bottom>
 </BorderPane>

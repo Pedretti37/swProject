@@ -1,55 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.VediMailController">
-   <top>
-      <Label text="Visualizza mail" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="36.0" />
-         </font>
-      </Label>
-   </top>
-   <center>
-      <GridPane BorderPane.alignment="CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="129.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="484.0" minWidth="10.0" prefWidth="471.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints maxHeight="103.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="103.0" minHeight="10.0" prefHeight="40.0" valignment="TOP" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="143.0" minHeight="10.0" prefHeight="54.0" valignment="TOP" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="211.0" minHeight="10.0" prefHeight="161.0" valignment="TOP" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="211.0" minHeight="10.0" prefHeight="53.0" valignment="TOP" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Label text=" Mittente: " />
-            <Label text=" Oggetto: " GridPane.rowIndex="2" />
-            <Label text=" Corpo: " GridPane.rowIndex="3" />
-            <Label fx:id="destinatarioLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="oggettoLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="corpoLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label fx:id="mittenteLabel" GridPane.columnIndex="1" />
-            <Label text=" Destinatario: " GridPane.rowIndex="1" />
-            <Label text="Giorno e ora:" GridPane.rowIndex="4" />
-            <Label fx:id="giornoOraLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-         </children>
-      </GridPane>
-   </center>
-   <bottom>
-      <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <buttons>
-          <Button fx:id="rispondiButton" mnemonicParsing="false" onAction="#switchToRispondi" text="Rispondi" />
-            <Button mnemonicParsing="false" onAction="#switchToMailPage" text="Indietro" />
-        </buttons>
-      </ButtonBar>
-   </bottom>
+<BorderPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.VediMailController">
+    <style>
+        .primary-color { -fx-background-color: #0078d4; }
+        .primary-text { -fx-text-fill: #0078d4; }
+        .back-button { -fx-background-color: #e0e0e0; }
+        .reply-button { -fx-text-fill: white; -fx-font-weight: bold; }
+        .info-label { -fx-font-weight: bold; -fx-text-fill: #555; }
+    </style>
+    
+    <top>
+        <VBox alignment="CENTER" style="-fx-border-color: #ccc; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10.0" right="20.0" bottom="10.0" left="20.0" />
+            </padding>
+            <Label text="Visualizza Messaggio" styleClass="primary-text">
+                <font>
+                    <Font size="28.0" />
+                </font>
+            </Label>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox alignment="TOP_LEFT" prefWidth="1280.0" spacing="20.0">
+            <padding>
+                <Insets top="40.0" right="100.0" bottom="40.0" left="100.0" />
+            </padding>
+            
+            <Label fx:id="oggettoLabel" text="[Oggetto della mail]" wrapText="true">
+                <font>
+                    <Font size="24.0" />
+                </font>
+            </Label>
+            
+            <GridPane hgap="10.0" vgap="10.0">
+                
+                <Label styleClass="info-label" text="Da:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label fx:id="mittenteLabel" text="[Nome del Mittente &lt;mail@example.com&gt;]" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                
+                <Label styleClass="info-label" text="A:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label fx:id="destinatarioLabel" text="[Nome del Destinatario &lt;mail@example.com&gt;]" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                
+                <Label styleClass="info-label" text="Data:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label fx:id="giornoOraLabel" text="[GG/MM/AAAA HH:MM:SS]" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            </GridPane>
+
+            <Label styleClass="info-label" text="Corpo del Messaggio:" />
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                <VBox>
+                    <padding>
+                        <Insets top="5.0" right="5.0" bottom="5.0" left="5.0" />
+                    </padding>
+                    <Label fx:id="corpoLabel" text="[Contenuto lungo del corpo della mail...]" wrapText="true" VBox.vgrow="ALWAYS" />
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER_RIGHT" spacing="10.0">
+            <padding>
+                <Insets top="10.0" right="100.0" bottom="10.0" left="100.0" />
+            </padding>
+            <Button mnemonicParsing="false" onAction="#switchToMailPage" text="⬅ Indietro" styleClass="back-button" />
+            <Button fx:id="rispondiButton" mnemonicParsing="false" onAction="#switchToRispondi" text="↩️ Rispondi" styleClass="primary-color, reply-button" />
+        </HBox>
+    </bottom>
 </BorderPane>

@@ -5,12 +5,11 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -19,118 +18,132 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.PazienteController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: #f7f7f7;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.PazienteController">
 
     <top>
-        <Label fx:id="welcomeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Pannello Paziente" BorderPane.alignment="CENTER">
-            <font>
-                <Font name="System Bold" size="36.0" />
-            </font>
-            <padding>
-                <Insets bottom="10.0" top="20.0" />
-            </padding>
-        </Label>
+        <VBox style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;">
+            <Label fx:id="welcomeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Pannello Paziente" BorderPane.alignment="CENTER">
+                <font>
+                    <Font name="System Bold" size="32.0" />
+                </font>
+                <padding>
+                    <Insets bottom="10.0" top="15.0" />
+                </padding>
+            </Label>
+        </VBox>
     </top>
 
     <center>
-        <VBox alignment="TOP_CENTER" prefHeight="432.0" prefWidth="1280.0" spacing="20.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" spacing="25.0">
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
             </padding>
 
-            <HBox alignment="CENTER">
-                <ButtonBar>
-                    <buttons>
-                        <Button fx:id="mailButton" onAction="#switchToMailPage" prefWidth="120.0" text="✉️ Mail" />
-                        <Button fx:id="questButton" onAction="#switchToQuestionarioPage" prefWidth="120.0" text="📝 Questionario" />
-                        <Button onAction="#switchToLogin" prefWidth="120.0" style="-fx-background-color: #ff6666;" text="🚪 Logout" />
-                    </buttons>
-                </ButtonBar>
+            <HBox alignment="CENTER" spacing="15.0">
+                <Button fx:id="mailButton" onAction="#switchToMailPage" prefWidth="140.0" style="-fx-background-color: #ffffff; -fx-border-color: #ccc; -fx-border-radius: 4; -fx-padding: 8 15; -fx-font-weight: bold;" text="✉️ Mail" />
+                <Button fx:id="questButton" onAction="#switchToQuestionarioPage" prefWidth="140.0" style="-fx-background-color: #ffffff; -fx-border-color: #ccc; -fx-border-radius: 4; -fx-padding: 8 15; -fx-font-weight: bold;" text="📝 Questionario" />
+                <Button onAction="#switchToLogin" prefWidth="140.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="🚪 Logout" />
             </HBox>
             
-            <Label fx:id="statoQuestionarioOdierno" text="Stato Questionario Odierno" />
+            <Label fx:id="statoQuestionarioOdierno" style="-fx-font-size: 16px; -fx-text-fill: #555;" text="Stato Questionario Odierno: Caricamento..." />
 
-            <LineChart fx:id="graficoGlicemia" prefHeight="400.0" prefWidth="500.0" title="📈 Valori Glicemia Recenti">
-                <xAxis>
-                    <CategoryAxis label="Data e Ora" side="BOTTOM" />
-                </xAxis>
-                <yAxis>
-                    <NumberAxis label="Glicemia (mg/dL)" side="LEFT" />
-                </yAxis>
-            </LineChart>
+            <VBox maxWidth="1000.0" prefHeight="450.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0.0, 0, 2);" VBox.vgrow="ALWAYS">
+                <LineChart fx:id="graficoGlicemia" title="📈 Valori Glicemia Recenti">
+                    <xAxis>
+                        <CategoryAxis label="Data e Ora" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Glicemia (mg/dL)" side="LEFT" />
+                    </yAxis>
+                </LineChart>
+            </VBox>
 
             <HBox alignment="CENTER" spacing="15.0">
-                <Label style="-fx-font-weight: bold;" text="Nuova Misurazione: " />
-                <TextField fx:id="valoreField" prefWidth="150.0" promptText="Valore Glicemia (mg/dL)" />
-                <ComboBox fx:id="indicazioniBox" editable="true" prefWidth="130.0" promptText="Pre/Post pasto" />
-                <TextField fx:id="oraField" prefWidth="60.0" promptText="Ora (HH)" />
-                <TextField fx:id="minutiField" prefHeight="25.0" prefWidth="80.0" promptText="Minuti (MM)" />
-                <Button onAction="#handleGlicemia" style="-fx-background-color: #5cb85c; -fx-text-fill: white;" text="➕ Inserisci" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Nuova Misurazione:" />
+                <TextField fx:id="valoreField" prefWidth="150.0" promptText="Valore (mg/dL)" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                <ComboBox fx:id="indicazioniBox" editable="true" prefWidth="150.0" promptText="Pre/Post pasto" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                <TextField fx:id="oraField" prefWidth="60.0" promptText="HH" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                <TextField fx:id="minutiField" prefWidth="60.0" promptText="MM" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                <Button onAction="#handleGlicemia" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" text="➕ Inserisci" />
             </HBox>
 
         </VBox>
     </center>
 
     <bottom>
-        <AnchorPane prefHeight="250.0" BorderPane.alignment="CENTER">
+        <HBox alignment="TOP_LEFT" spacing="50.0" style="-fx-border-color: #ddd; -fx-border-width: 1 0 0 0; -fx-background-color: white;">
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
             </padding>
-            <children>
-                <HBox layoutX="20.0" layoutY="20.0" spacing="30.0">
-                    <children>
-                        <ImageView fx:id="fotoProfilo" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: lightgray; -fx-border-width: 1;" />
-                        <VBox spacing="5.0">
-                            <children>
-                                <Label fx:id="nomeLabel" style="-fx-font-size: 18pt; -fx-font-weight: bold;" text="Nome Paziente" />
-                                <Label fx:id="ddnLabel" text="Data di Nascita: " />
-                                <Label fx:id="sessoLabel" text="Sesso: " />
-                                <Label fx:id="diabetologoLabel" text="Diabetologo: " />
-                            </children>
-                            <HBox.margin>
-                                <Insets top="10.0" />
-                            </HBox.margin>
-                        </VBox>
-                    </children>
-                </HBox>
-
-                <VBox alignment="TOP_LEFT" layoutX="900.0" layoutY="20.0" spacing="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-                    <Label fx:id="terapiaCorrente" style="-fx-font-size: 19.0; -fx-font-weight: bold;" text="💊 Terapia Corrente">
-                        <font>
-                            <Font size="19.0" />
-                        </font>
-                    </Label>
-                    <GridPane prefWidth="300.0" style="-fx-padding: 10; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-color: #f7f7f7;">
+            
+            <HBox alignment="TOP_LEFT" spacing="30.0">
+                <VBox spacing="5.0">
+                    <ImageView fx:id="fotoProfilo" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: #ccc; -fx-border-width: 2; -fx-background-radius: 60;" />
+                </VBox>
+                
+                <VBox spacing="8.0">
+                    <Label fx:id="nomeLabel" style="-fx-font-size: 20pt; -fx-font-weight: bold;" text="Nome Paziente" />
+                    <GridPane hgap="10.0" vgap="5.0">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="120.0" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="200.0" />
                         </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <children>
-                            <Label style="-fx-font-weight: bold;" text="Nome farmaco:" />
-                            <Label style="-fx-font-weight: bold;" text="Dosi giornaliere:" GridPane.rowIndex="1" />
-                            <Label style="-fx-font-weight: bold;" text="Quantità:" GridPane.rowIndex="2" />
-                            <Label style="-fx-font-weight: bold;" text="Periodo:" GridPane.rowIndex="3" />
-                            <Label style="-fx-font-weight: bold;" text="Indicazioni:" GridPane.rowIndex="4" />
-                            <Label style="-fx-font-weight: bold;" text="Modificato da:" GridPane.rowIndex="5" />
-                            
-                            <Label fx:id="nomeFarmacoLabel" GridPane.columnIndex="1" />
-                            <Label fx:id="dosiGiornaliereLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <Label fx:id="quantitàLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            <Label fx:id="periodoLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                            <Label fx:id="indicazioniLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                            <Label fx:id="modificatoLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        </children>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Data di Nascita:" GridPane.rowIndex="0" />
+                        <Label fx:id="ddnLabel" text="[Dati dinamicamente caricati]" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Sesso:" GridPane.rowIndex="1" />
+                        <Label fx:id="sessoLabel" text="[Dati dinamicamente caricati]" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Diabetologo:" GridPane.rowIndex="2" />
+                        <Label fx:id="diabetologoLabel" text="[Dati dinamicamente caricati]" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <rowConstraints>
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                  </rowConstraints>
                     </GridPane>
                 </VBox>
-            </children>
-        </AnchorPane>
+            </HBox>
+
+            <VBox prefWidth="350.0" spacing="10.0" style="-fx-background-color: #f7f7f7; -fx-padding: 15; -fx-border-radius: 5;">
+                <Label fx:id="terapiaCorrente" style="-fx-font-size: 18.0; -fx-font-weight: bold;" text="💊 Terapia Corrente" />
+                <GridPane hgap="10.0" vgap="5.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="110.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="150.0" />
+                    </columnConstraints>
+                    
+                    <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Farmaco:" GridPane.rowIndex="0" />
+                    <Label fx:id="nomeFarmacoLabel" text="N/D" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    
+                    <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Dosi gg.:" GridPane.rowIndex="1" />
+                    <Label fx:id="dosiGiornaliereLabel" text="N/D" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    
+                    <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Quantità:" GridPane.rowIndex="2" />
+                    <Label fx:id="quantitàLabel" text="N/D" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    
+                    <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Periodo:" GridPane.rowIndex="3" />
+                    <Label fx:id="periodoLabel" text="N/D" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    
+                    <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Indicazioni:" GridPane.rowIndex="4" />
+                    <Label fx:id="indicazioniLabel" text="N/D" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    
+                    <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Modificato da:" GridPane.rowIndex="5" />
+                    <Label fx:id="modificatoLabel" text="N/D" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+            </VBox>
+            
+            <VBox prefWidth="350.0" spacing="10.0" style="-fx-background-color: #f7f7f7; -fx-padding: 15; -fx-border-radius: 5;" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-size: 18.0; -fx-font-weight: bold;" text="Storico Questionari 📝" />
+                <ListView fx:id="listaQuestionari" prefHeight="170.0" style="-fx-border-color: #ddd; -fx-border-width: 1; -fx-border-radius: 4;" />
+            </VBox>
+            
+        </HBox>
     </bottom>
 </BorderPane>
