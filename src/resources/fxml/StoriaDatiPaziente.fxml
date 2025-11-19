@@ -1,58 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.StoriaDatiPazienteController">
-   <top>
-      <Label text="Gestione dati paziente" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="36.0" />
-         </font>
-      </Label>
-   </top>
-   <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <TextField fx:id="nomeField" layoutX="32.0" layoutY="109.0" promptText="Nome" />
-            <Button layoutX="76.0" layoutY="147.0" mnemonicParsing="false" onAction="#aggiungiFattoreComorbiditàAllergia" text="Aggiungi" />
-            <ComboBox fx:id="tipologia" layoutX="31.0" layoutY="74.0" prefWidth="150.0" promptText="Tipologia" visibleRowCount="3" />
-            <Button layoutX="79.0" layoutY="188.0" mnemonicParsing="false" onAction="#rimuoviFattoreComorbiditàAllergia" text="Rimuovi" />
-         </children>
-      </AnchorPane>
-   </center>
-   <bottom>
-      <Button mnemonicParsing="false" onAction="#switchToMostraDatiPaziente" text="Indietro" BorderPane.alignment="CENTER" />
-   </bottom>
-   <left>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="44.0" layoutY="75.0" text="Patologie pregeresse" />
-            <Button layoutX="40.0" layoutY="218.0" mnemonicParsing="false" onAction="#aggiungiPatologia" text="Aggiungi patologia" />
-            <Button layoutX="44.0" layoutY="254.0" mnemonicParsing="false" onAction="#rimuoviPatologia" text="Rimuovi patologia" />
-            <DatePicker fx:id="dataPatologiaField" layoutX="12.0" layoutY="147.0" promptText="Data di inizio" />
-            <TextField fx:id="nomePatologiaField" layoutX="25.0" layoutY="109.0" promptText="Nome patologia" />
-            <TextArea fx:id="indicazioniPatologiaArea" layoutX="12.0" layoutY="178.0" prefHeight="37.0" prefWidth="174.0" promptText="Stato" />
-         </children>
-      </AnchorPane>
-   </left>
-   <right>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="44.0" layoutY="77.0" text="Terapie concomitanti" />
-            <DatePicker fx:id="dataInizioTerapiaField" layoutX="20.0" layoutY="147.0" promptText="Data di inizio" />
-            <DatePicker fx:id="dataFineTerapiaField" layoutX="20.0" layoutY="191.0" promptText="Data di fine" />
-            <TextField fx:id="nomeTerapiaField" layoutX="25.0" layoutY="106.0" promptText="Nome farmaco" />
-            <Button layoutX="48.0" layoutY="228.0" mnemonicParsing="false" onAction="#aggiungiTerapia" text="Aggiungi terapia" />
-            <Button layoutX="50.0" layoutY="264.0" mnemonicParsing="false" onAction="#rimuoviTerapia" text="Rimuovi terapia" />
-         </children>
-      </AnchorPane>
-   </right>
+<BorderPane prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: #f7f7f7;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.StoriaDatiPazienteController">
+
+    <top>
+        <VBox alignment="CENTER" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;">
+            <Label text="⚙️ Gestione Dati Storici Paziente" BorderPane.alignment="CENTER" style="-fx-text-fill: #64B5F6; -fx-font-weight: bold;">
+                <font>
+                    <Font size="32.0" />
+                </font>
+                <padding>
+                    <Insets bottom="10.0" top="15.0" />
+                </padding>
+            </Label>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="40.0">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            
+            <Label text="Aggiungi o Rimuovi elementi alla storia clinica del paziente" style="-fx-font-size: 16px; -fx-text-fill: #555;" />
+
+            <GridPane hgap="30.0" vgap="20.0" alignment="TOP_CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="100" /> <ColumnConstraints hgrow="SOMETIMES" prefWidth="100" /> <ColumnConstraints hgrow="SOMETIMES" prefWidth="100" /> </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                
+                
+                <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.0, 0, 2);" GridPane.columnIndex="0">
+                    <Label text="🏥 Patologie Pregresse" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #0078d4;" />
+                    <TextField fx:id="nomePatologiaField" promptText="Nome patologia" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                    <DatePicker fx:id="dataPatologiaField" promptText="Data di inizio" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                    <TextArea fx:id="indicazioniPatologiaArea" prefHeight="70.0" promptText="Stato/Indicazioni" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" wrapText="true" />
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <Button onAction="#aggiungiPatologia" text="➕ Aggiungi" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" />
+                        <Button onAction="#rimuoviPatologia" text="❌ Rimuovi" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" />
+                    </HBox>
+                </VBox>
+                
+                <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.0, 0, 2);" GridPane.columnIndex="1">
+                    <Label text="⚠️ Fattori, Comorbidità &amp; Allergie" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #A00;" />
+                    <ComboBox fx:id="tipologia" prefWidth="1.7976931348623157E308" promptText="Tipologia (Fattore, Comorbidità, Allergia)" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" visibleRowCount="3" />
+                    <TextField fx:id="nomeField" promptText="Nome (Es. Fumo, Asma, Ipertensione)" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                    <VBox prefHeight="70.0" /> <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <Button onAction="#aggiungiFattoreComorbiditàAllergia" text="➕ Aggiungi" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" />
+                        <Button onAction="#rimuoviFattoreComorbiditàAllergia" text="❌ Rimuovi" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" />
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.0, 0, 2);" GridPane.columnIndex="2">
+                    <Label text="💊 Terapie Concomitanti" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #4CAF50;" />
+                    <TextField fx:id="nomeTerapiaField" promptText="Nome farmaco/trattamento" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                    <DatePicker fx:id="dataInizioTerapiaField" promptText="Data di inizio" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                    <DatePicker fx:id="dataFineTerapiaField" promptText="Data di fine (Opzionale)" style="-fx-padding: 8; -fx-border-color: #ccc; -fx-border-radius: 4;" />
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <Button onAction="#aggiungiTerapia" text="➕ Aggiungi" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" />
+                        <Button onAction="#rimuoviTerapia" text="❌ Rimuovi" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" />
+                    </HBox>
+                </VBox>
+                
+            </GridPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <Button onAction="#switchToMostraDatiPaziente" text="⬅ Salva e Torna ai Dati Paziente" 
+                style="-fx-background-color: #64B5F6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 25; -fx-background-radius: 4;" 
+                BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="30.0" top="20.0" />
+            </BorderPane.margin>
+        </Button>
+    </bottom>
 </BorderPane>
