@@ -4,11 +4,11 @@ import java.time.LocalDate;
 
 public class Glicemia {
 
-	String cf;
-	int valore;
-	LocalDate giorno;
-	String orario;
-	String indicazioni;
+	private String cf;
+	private int valore;
+	private LocalDate giorno;
+	private String orario;
+	private String indicazioni;
 	
 	public Glicemia(String cf, int valore, LocalDate giorno, String orario, String indicazioni) {
 		this.cf = cf;

@@ -56,4 +56,8 @@ public class Mail {
 	public boolean getLetta() {
 		return letta;
 	}
+
+	public void setLetta(boolean letta) {
+		this.letta = letta;
+	}
 }

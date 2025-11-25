@@ -33,10 +33,6 @@ public class Utente {
 		return this.pw.equals(pw);
 	}
 	
-	public boolean checkRuolo(String ruolo) {
-		return this.ruolo.equals(ruolo);
-	}
-	
 	public String getCf() {
 		return cf;
 	}
@@ -47,6 +43,14 @@ public class Utente {
 	
 	public String getRuolo() {
 		return ruolo;
+	}
+
+	public boolean isDiabetologo() {
+    	return "diabetologo".equals(this.ruolo);
+	}
+
+	public boolean isPaziente() {
+		return "paziente".equals(this.ruolo);
 	}
 	
 	public String getNomeCognome() {
@@ -62,6 +66,7 @@ public class Utente {
 	}
 	
 	public InputStream getFoto() {
+		if (this.foto == null) return null; // Evita il crash se non c'è foto
 		try{
 			return this.foto.getBinaryStream();
 		} catch (SQLException e) {
