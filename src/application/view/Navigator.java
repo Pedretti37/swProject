@@ -2,8 +2,8 @@ package application.view;
 
 import java.io.IOException;
 
-import application.admin.MessageUtils;
 import application.controller.MailController;
+import application.utils.MessageUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
