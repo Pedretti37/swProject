@@ -1,6 +1,6 @@
 package application;
 
-import application.admin.Amministratore;
+import application.service.AdminService;
 import application.view.Navigator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +13,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	
 	public void init() throws Exception {
-		Amministratore.loadFromDatabase();
+		// Carico inizialmente solo gli utenti dal database per fare le liste pazienti e diabetologi
+		AdminService.loadAllUtenti();
 	}
 	
 	public void start(Stage primaryStage) {
