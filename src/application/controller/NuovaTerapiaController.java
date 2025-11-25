@@ -2,12 +2,15 @@ package application.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import application.admin.Amministratore;
-import application.admin.MessageUtils;
-import application.admin.Sessione;
 import application.model.Terapia;
 import application.model.Utente;
+import application.service.AdminService;
+import application.utils.MessageUtils;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,8 +21,11 @@ import javafx.scene.control.TextField;
 
 public class NuovaTerapiaController {
 	
+	// VARIABILI
 	private Utente u;
 	private Utente p;
+	private List<Terapia> terapie = new ArrayList<>();
+	private StringBuilder msg;
 	
 	// FIELD
 	@FXML private TextField farmacoField;
@@ -32,22 +38,14 @@ public class NuovaTerapiaController {
 	// LABEL
 	@FXML private Label labelPaziente;
 	
-	// VARIABILI
-	private int dosiGiornaliere;
-	private int quantità;
-	private LocalDate fine;
-	
 	@FXML
 	private void initialize() {
 		u = Sessione.getInstance().getUtente();
 		p = Sessione.getInstance().getPazienteSelezionato();
 		
-		labelPaziente.setText(p.getNomeCognome() + " (" + p.getCf() + ")");
+		terapie = AdminService.loadTerapieByPaziente(p);
 
-		fine = Amministratore.getTerapieByCF(p.getCf()).stream()
-			.map(Terapia::getDataFine)
-			.max(LocalDate::compareTo)
-			.orElse(null);
+		labelPaziente.setText(p.getNomeCognome() + " (" + p.getCf() + ")");
 	}
 
 	public enum TerapiaResult {
@@ -66,27 +64,47 @@ public class NuovaTerapiaController {
 			return TerapiaResult.EMPTY_FIELDS;
 		}
 
+		int dosiGiornaliereInt;
+		int quantitàInt;
 		try{
-			this.dosiGiornaliere = Integer.parseInt(dosiGiornaliere);
-			this.quantità = Integer.parseInt(quantità);
+			dosiGiornaliereInt = Integer.parseInt(dosiGiornaliere);
+			quantitàInt = Integer.parseInt(quantità);
 		} catch (NumberFormatException n) {
 			return TerapiaResult.INVALID_DATA;
 		}
 
 		if(dataInizio.isBefore(LocalDate.now()) ||
-				!dataFine.isAfter(dataInizio) ||
-				this.dosiGiornaliere < 1 || this.quantità < 1) {
+				dataFine.isBefore(dataInizio) ||
+				dosiGiornaliereInt < 1 || quantitàInt < 1) {
 			return TerapiaResult.INVALID_DATA;
 		}
-		else if(fine != null) {
-			if(dataInizio.isBefore(fine) || dataInizio.isEqual(fine)) {
-				return TerapiaResult.INVALID_DATE_RANGE;
-			}
-	    }
 		
+		List<Terapia> conflitti = terapie.stream()
+			.filter(terapia -> terapia.getNomeFarmaco().equalsIgnoreCase(nomeFarmaco)) // filtro sul farmaco
+			.filter(terapia -> { // filtro sulla sovrapposizione delle date
+				LocalDate esistenteInizio = terapia.getDataInizio();
+				LocalDate esistenteFine = terapia.getDataFine();
+
+				boolean startOverlap = !dataInizio.isAfter(esistenteFine);
+				boolean endOverlap = !dataFine.isBefore(esistenteInizio);
+
+				return startOverlap && endOverlap;
+			})
+			.collect(Collectors.toList());
+		
+		if(!conflitti.isEmpty()) {
+			msg = new StringBuilder("Terapie in conflitto:\n");
+			conflitti.forEach(terapia ->
+					msg.append("- ").append(terapia.getNomeFarmaco()).append(": ")
+					   .append(terapia.getDataInizio().format(AdminService.dateFormatter)).append(" -> ")
+					   .append(terapia.getDataFine().format(AdminService.dateFormatter)).append("\n")
+			);
+			return TerapiaResult.INVALID_DATE_RANGE;
+		}
+
 		// Creazione della terapia nel database
-		Terapia terapia = new Terapia(0, p.getCf(), nomeFarmaco, this.dosiGiornaliere, this.quantità, dataInizio, dataFine, indicazioni, u.getCf(), false);
-		boolean ok = Amministratore.terapiaDAO.creaTerapia(terapia);
+		Terapia t = new Terapia(0, p.getCf(), nomeFarmaco, dosiGiornaliereInt, quantitàInt, dataInizio, dataFine, indicazioni, u.getCf(), false);
+		boolean ok = AdminService.terapiaDAO.creaTerapia(t);
 
 		if(ok) {
 			return TerapiaResult.SUCCESS;
@@ -102,7 +120,7 @@ public class NuovaTerapiaController {
 		switch(result) {
 			case EMPTY_FIELDS -> MessageUtils.showError("Per favore, compila tutti i campi.");
 			case INVALID_DATA -> MessageUtils.showError("Dati non validi. Controlla le date e i numeri inseriti.");
-			case INVALID_DATE_RANGE -> MessageUtils.showError("La data di inizio deve essere successiva alla fine dell'ultima terapia.\nL'ultima terapia finisce: " + fine);
+			case INVALID_DATE_RANGE -> MessageUtils.showError(msg.toString());
 			case FAILURE -> MessageUtils.showError("Errore durante la creazione della terapia.");
 			case SUCCESS -> {
 				MessageUtils.showSuccess("Terapia creata con successo.");
@@ -113,6 +131,7 @@ public class NuovaTerapiaController {
 	
 	@FXML
 	private void switchToMostraDatiPaziente(ActionEvent event) throws IOException {
+		terapie.clear();
 		Navigator.getInstance().switchToMostraDatiPaziente(event);
 	}
 }

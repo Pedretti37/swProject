@@ -2,10 +2,10 @@ package application.controller;
 
 import java.io.IOException;
 
-import application.admin.Amministratore;
-import application.admin.MessageUtils;
-import application.admin.Sessione;
 import application.model.Utente;
+import application.service.AdminService;
+import application.utils.MessageUtils;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +14,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoginController {
+
+	private Utente utente;
 
 	@FXML public TextField cfField;
 	@FXML public PasswordField passwordField;
@@ -36,16 +38,16 @@ public class LoginController {
 		if(cf == null || cf.isBlank() || password == null || password.isBlank())
 			return LoginResult.EMPTY_FIELDS;
 
-		if(!Amministratore.utenteEsiste(cf))
+		if(!AdminService.utenteEsiste(cf))
 			return LoginResult.USER_NOT_FOUND;
 
-		Utente utente = Amministratore.getUtenteByCf(cf);
+		utente = AdminService.getUtenteByCf(cf);
 
 		if(utente.checkPw(password)) {
 			Sessione.getInstance().setUtente(utente);
 
-			if(utente.getRuolo().equals("diabetologo")) return LoginResult.SUCCESS_DIABETOLOGO;
-			else if(utente.getRuolo().equals("paziente")) return LoginResult.SUCCESS_PAZIENTE;
+			if(utente.isDiabetologo()) return LoginResult.SUCCESS_DIABETOLOGO;
+			else if(utente.isPaziente()) return LoginResult.SUCCESS_PAZIENTE;
 		}
 
 		return LoginResult.WRONG_CREDENTIALS;

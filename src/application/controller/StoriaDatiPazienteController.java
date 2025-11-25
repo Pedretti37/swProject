@@ -2,14 +2,16 @@ package application.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import application.admin.Amministratore;
-import application.admin.MessageUtils;
-import application.admin.Sessione;
 import application.model.FattoriComorbiditàAllergie;
 import application.model.Patologia;
 import application.model.TerapiaConcomitante;
 import application.model.Utente;
+import application.service.AdminService;
+import application.utils.MessageUtils;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,8 +22,12 @@ import javafx.scene.control.TextField;
 
 public class StoriaDatiPazienteController {
 	
+	// VARIABILI
 	private Utente u;
 	private Utente p;
+	private List<FattoriComorbiditàAllergie> fattoriComorbiditàAllergie = new ArrayList<>();
+	private List<TerapiaConcomitante> terapieConcomitanti = new ArrayList<>();
+	private List<Patologia> patologie = new ArrayList<>();
 	
 	@FXML private ComboBox<String> tipologia;
 	@FXML private TextField nomeField;
@@ -36,8 +42,16 @@ public class StoriaDatiPazienteController {
 	private void initialize() {
 		u = Sessione.getInstance().getUtente();
 		p = Sessione.getInstance().getPazienteSelezionato();
+
+		caricaDati();
 		
 		tipologia.getItems().addAll("Fattore Di Rischio", "Comorbidità", "Allergia");
+	}
+
+	private void caricaDati() {
+		fattoriComorbiditàAllergie = AdminService.loadFattoriComorbiditàAllergieByPaziente(p);
+		terapieConcomitanti = AdminService.loadTerapieConcomitantiByPaziente(p);
+		patologie = AdminService.loadPatologieByPaziente(p);
 	}
 	
 	public enum StoriaDatiPazienteResult {
@@ -54,17 +68,17 @@ public class StoriaDatiPazienteController {
 			return StoriaDatiPazienteResult.EMPTY_FIELDS;
 		}
 		else if (tipo.equals("Fattore Di Rischio") && 
-				Amministratore.getFattoriDiRischioByCF(p.getCf()).stream()
+				fattoriComorbiditàAllergie.stream()
 					.anyMatch(f -> f.getNome().equalsIgnoreCase(nome))) {
 			return StoriaDatiPazienteResult.DATA_ALREADY_EXISTS;
 		}
 		else if(tipo.equals("Comorbidità") && 
-				Amministratore.getComorbiditàByCF(p.getCf()).stream()
+				fattoriComorbiditàAllergie.stream()
 					.anyMatch(c -> c.getNome().equalsIgnoreCase(nome))) {
 			return StoriaDatiPazienteResult.DATA_ALREADY_EXISTS;
 		}
 		else if(tipo.equals("Allergia") && 
-				Amministratore.getAllergieByCF(p.getCf()).stream()
+				fattoriComorbiditàAllergie.stream()
 					.anyMatch(a -> a.getNome().equalsIgnoreCase(nome))) {
 			return StoriaDatiPazienteResult.DATA_ALREADY_EXISTS;
 		}
@@ -75,7 +89,7 @@ public class StoriaDatiPazienteController {
 				nomeField.getText(),
 				u.getCf()
 			);
-		boolean ok = Amministratore.fattoriComorbiditàAllergieDAO.creaFattoreComorbiditàAllergia(fca);
+		boolean ok = AdminService.fattoriComorbiditàAllergieDAO.creaFattoreComorbiditàAllergia(fca);
 		if(ok) {
 			return StoriaDatiPazienteResult.SUCCESS;
 		} else {
@@ -93,6 +107,7 @@ public class StoriaDatiPazienteController {
 			case FAILURE -> MessageUtils.showError("Errore nell'inserimento del dato.");
 			case INVALID_DATE -> {} // Caso non interessante per questo dato
 			case SUCCESS -> {
+				AdminService.loadFattoriComorbiditàAllergieByPaziente(p);
 				MessageUtils.showSuccess("Dato paziente inserito.");
 				switchToMostraDatiPaziente(event);
 			}
@@ -109,7 +124,7 @@ public class StoriaDatiPazienteController {
 				nomeField.getText(),
 				u.getCf()
 			);
-		boolean ok = Amministratore.fattoriComorbiditàAllergieDAO.eliminaFattoreComorbiditàAllergia(fca);
+		boolean ok = AdminService.fattoriComorbiditàAllergieDAO.eliminaFattoreComorbiditàAllergia(fca);
 		if(ok) {
 			return StoriaDatiPazienteResult.SUCCESS;
 		} else {
@@ -126,6 +141,7 @@ public class StoriaDatiPazienteController {
 			case DATA_ALREADY_EXISTS -> {} // Caso non interessante per la rimozione
 			case INVALID_DATE -> {} // Caso non interessante per questo dato
 			case SUCCESS -> {
+				AdminService.loadFattoriComorbiditàAllergieByPaziente(p);
 				MessageUtils.showSuccess("Dato paziente rimosso.");
 				switchToMostraDatiPaziente(event);
 			}
@@ -137,7 +153,7 @@ public class StoriaDatiPazienteController {
 		if(nome == null || nome.isBlank() || indicazioni == null || indicazioni.isBlank() || dataInizio == null) {
 			return StoriaDatiPazienteResult.EMPTY_FIELDS;
 		}
-		else if (Amministratore.getPatologieByCF(p.getCf()).stream()
+		else if (patologie.stream()
 				.anyMatch(patologia -> patologia.getNome().equalsIgnoreCase(nome))) {
 			return StoriaDatiPazienteResult.DATA_ALREADY_EXISTS;
 		}
@@ -152,7 +168,7 @@ public class StoriaDatiPazienteController {
 				indicazioni,
 				u.getCf()
 			);
-		boolean ok = Amministratore.patologiaDAO.creaPatologia(patologia);
+		boolean ok = AdminService.patologiaDAO.creaPatologia(patologia);
 		if(ok) {
 			return StoriaDatiPazienteResult.SUCCESS;
 		} else {
@@ -173,6 +189,7 @@ public class StoriaDatiPazienteController {
 			case INVALID_DATE -> MessageUtils.showError("La data di inizio non può essere futura.");
 			case FAILURE -> MessageUtils.showError("Errore nell'inserimento della patologia.");
 			case SUCCESS -> {
+				AdminService.loadPatologieByPaziente(p);
 				MessageUtils.showSuccess("Patologia paziente inserita.");
 				switchToMostraDatiPaziente(event);
 			}
@@ -190,7 +207,7 @@ public class StoriaDatiPazienteController {
 				indicazioni,
 				u.getCf()
 			);
-		boolean ok = Amministratore.patologiaDAO.eliminaPatologia(patologia);
+		boolean ok = AdminService.patologiaDAO.eliminaPatologia(patologia);
 		if(ok) {
 			return StoriaDatiPazienteResult.SUCCESS;
 		} else {
@@ -211,6 +228,7 @@ public class StoriaDatiPazienteController {
 			case DATA_ALREADY_EXISTS -> {} // Caso non interessante per la rimozione
 			case INVALID_DATE -> {} // Caso non interessante per questo dato
 			case SUCCESS -> {
+				AdminService.loadPatologieByPaziente(p);
 				MessageUtils.showSuccess("Patologia paziente rimossa.");
 				switchToMostraDatiPaziente(event);
 			}
@@ -222,7 +240,7 @@ public class StoriaDatiPazienteController {
 		if(nome == null || nome.isBlank() || dataInizio == null || dataFine == null) {
 			return StoriaDatiPazienteResult.EMPTY_FIELDS;
 		}
-		else if (Amministratore.getTerapieConcomitantiByCF(p.getCf()).stream()
+		else if (terapieConcomitanti.stream()
 				.anyMatch(terapia -> terapia.getNome().equalsIgnoreCase(nome)
 						&& terapia.getDataInizio().equals(dataInizio))) {
 			return StoriaDatiPazienteResult.DATA_ALREADY_EXISTS;
@@ -238,7 +256,7 @@ public class StoriaDatiPazienteController {
 				dataFine,
 				u.getCf()
 			);
-		boolean ok = Amministratore.terapiaConcomitanteDAO.creaTerapiaConcomitante(terapiaConcomitante);
+		boolean ok = AdminService.terapiaConcomitanteDAO.creaTerapiaConcomitante(terapiaConcomitante);
 		if(ok) {
 			return StoriaDatiPazienteResult.SUCCESS;
 		} else {
@@ -259,6 +277,7 @@ public class StoriaDatiPazienteController {
 			case INVALID_DATE -> MessageUtils.showError("La data di fine non può essere precedente alla data di inizio.");
 			case FAILURE -> MessageUtils.showError("Errore nell'inserimento della terapia concomitante.");
 			case SUCCESS -> {
+				AdminService.loadTerapieConcomitantiByPaziente(p);
 				MessageUtils.showSuccess("Terapia concomitante paziente inserita.");
 				switchToMostraDatiPaziente(event);
 			}
@@ -279,7 +298,7 @@ public class StoriaDatiPazienteController {
 				dataFine,
 				u.getCf()
 			);
-		boolean ok = Amministratore.terapiaConcomitanteDAO.eliminaTerapiaConcomitante(terapiaConcomitante);
+		boolean ok = AdminService.terapiaConcomitanteDAO.eliminaTerapiaConcomitante(terapiaConcomitante);
 		if(ok) {
 			return StoriaDatiPazienteResult.SUCCESS;
 		} else {
@@ -300,15 +319,24 @@ public class StoriaDatiPazienteController {
 			case FAILURE -> MessageUtils.showError("Errore nella rimozione della terapia concomitante.\nTerapia non trovata.");
 			case DATA_ALREADY_EXISTS -> {} // Caso non interessante per la rimozione
 			case SUCCESS -> {
+				AdminService.loadTerapieConcomitantiByPaziente(p);
 				MessageUtils.showSuccess("Terapia concomitante paziente rimossa.");
 				switchToMostraDatiPaziente(event);
 			}
 		}
 	}
 	
+	// SVUOTA LISTE
+	private void clearAll() {
+		terapieConcomitanti.clear();
+		patologie.clear();
+		fattoriComorbiditàAllergie.clear();
+	}
+
 	// NAVIGAZIONE
 	@FXML
 	private void switchToMostraDatiPaziente(ActionEvent event) throws IOException {
+		clearAll();
 		Navigator.getInstance().switchToMostraDatiPaziente(event);
 	}
 }

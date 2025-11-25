@@ -2,15 +2,16 @@ package application.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import application.admin.Amministratore;
-import application.admin.MessageUtils;
-import application.admin.Sessione;
 import application.controller.NuovaTerapiaController.TerapiaResult;
 import application.model.Terapia;
 import application.model.Utente;
+import application.service.AdminService;
+import application.utils.MessageUtils;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,9 +22,13 @@ import javafx.scene.control.TextField;
 
 public class ModificaTerapiaController {
 	
+	// VARIABILI
 	private Utente u;
 	private Utente p;
-	private Terapia t;
+	private Terapia t; // oggetto in sessione
+	private Terapia terapia; // oggetto che si prova a creare
+	private List<Terapia> terapie = new ArrayList<>();
+	private StringBuilder msg;
 	
 	// FIELD
 	@FXML private TextField farmacoField;
@@ -36,13 +41,6 @@ public class ModificaTerapiaController {
 	// LABEL
 	@FXML private Label labelPaziente;
 	@FXML private Label nomeFarmacoLabel;
-
-	// VARIABILI
-	int dosiGiornaliere;
-	int quantità;
-	LocalDate dataInizio;
-	LocalDate dataFine;
-	StringBuilder msg;
 	
 	@FXML
 	private void initialize() {
@@ -50,51 +48,47 @@ public class ModificaTerapiaController {
 		p = Sessione.getInstance().getPazienteSelezionato();
 		t = Sessione.getInstance().getTerapiaSelezionata();
 		
+		terapie = AdminService.loadTerapieByPaziente(p);
+
 		labelPaziente.setText(p.getNomeCognome() + " (" + p.getCf() + ")");
 		nomeFarmacoLabel.setText(t.getNomeFarmaco());
 	}
-
-	/*public enum ModificaTerapiaResult {
-		SUCCESS,
-		FAILURE,
-		INVALID_DATA,
-		INVALID_DATE_RANGE,
-		EMPTY_FIELDS,
-	}*/
 
 	public TerapiaResult tryModificaTerapia(String dosiGiornaliere, String quantità, LocalDate dataInizio, LocalDate dataFine, String indicazioni) {
 		if(dataInizio == null || dataFine == null) {
 			return TerapiaResult.EMPTY_FIELDS;
 		}
 
+		int dosiGiornaliereInt;
+		int quantitàInt;
 		try {
-	        this.dosiGiornaliere = Integer.parseInt(dosiGiornaliere);
-	        this.quantità = Integer.parseInt(quantità);
+	        dosiGiornaliereInt = Integer.parseInt(dosiGiornaliere);
+	        quantitàInt = Integer.parseInt(quantità);
 	    } catch (NumberFormatException n) {
 	    	return TerapiaResult.INVALID_DATA;
 	    }
 
-		if(dataInizio.isBefore(LocalDate.now()) ||
+		if(dataInizio.isBefore(t.getDataInizio()) ||
 				dataFine.isBefore(dataInizio) ||
 				dataFine.isEqual(dataInizio) ||
 				dataFine.isBefore(LocalDate.now()) ||
-				this.dosiGiornaliere < 1 || this.quantità < 1) {
+				dosiGiornaliereInt < 1 || quantitàInt < 1) {
 			return TerapiaResult.INVALID_DATA;
 		}
 		
 		// LISTA TERAPIA IN CONFLITTO
-		List<Terapia> conflitti = Amministratore.getTerapieByCF(p.getCf()).stream()
-			.filter(terapia -> !terapia.getNomeFarmaco().equals(t.getNomeFarmaco())
-					&& !terapia.getDataInizio().equals(dataInizioField.getValue()))
-			.filter(terapia -> {
-					LocalDate inizio = terapia.getDataInizio();
-					LocalDate fine = terapia.getDataFine();
-					
-					return (dataInizioField.getValue().isAfter(inizio) && dataInizioField.getValue().isBefore(fine) || 
-							dataInizioField.getValue().isEqual(fine) || dataInizioField.getValue().isEqual(inizio)) || 
-						   (dataFineField.getValue().isBefore(fine) && dataFineField.getValue().isAfter(inizio) || 
-								   dataFineField.getValue().isEqual(fine) || dataFineField.getValue().isEqual(inizio)) ||
-						   (dataInizioField.getValue().isBefore(inizio) && dataFineField.getValue().isAfter(fine));
+
+		List<Terapia> conflitti = terapie.stream()
+			.filter(terapia -> terapia.getId() != t.getId()) // esclusione della terapia che sto modificando
+			.filter(terapia -> terapia.getNomeFarmaco().equalsIgnoreCase(t.getNomeFarmaco())) // filtro sul farmaco
+			.filter(terapia -> { // filtro sulla sovrapposizione delle date
+				LocalDate esistenteInizio = terapia.getDataInizio();
+				LocalDate esistenteFine = terapia.getDataFine();
+
+				boolean startOverlap = !dataInizio.isAfter(esistenteFine);
+				boolean endOverlap = !dataFine.isBefore(esistenteInizio);
+
+				return startOverlap && endOverlap;
 			})
 			.collect(Collectors.toList());
 		
@@ -102,15 +96,15 @@ public class ModificaTerapiaController {
 			msg = new StringBuilder("Terapie in conflitto:\n");
 			conflitti.forEach(terapia ->
 					msg.append("- ").append(terapia.getNomeFarmaco()).append(": ")
-					   .append(terapia.getDataInizio()).append(" -> ")
-					   .append(terapia.getDataFine()).append("\n")
+					   .append(terapia.getDataInizio().format(AdminService.dateFormatter)).append(" -> ")
+					   .append(terapia.getDataFine().format(AdminService.dateFormatter)).append("\n")
 			);
 			return TerapiaResult.INVALID_DATE_RANGE;
 		}
 		
 		// Modifica della terapia nel database
-		Terapia terapia = new Terapia(t.getId(), t.getCf(), null, this.dosiGiornaliere, this.quantità, dataInizio, dataFine, indicazioniField.getText(), u.getCf(), false);
-		boolean ok = Amministratore.terapiaDAO.modificaTerapia(terapia);
+		terapia = new Terapia(t.getId(), t.getCf(), t.getNomeFarmaco(), dosiGiornaliereInt, quantitàInt, dataInizio, dataFine, indicazioniField.getText(), u.getCf(), false);
+		boolean ok = AdminService.terapiaDAO.modificaTerapia(terapia);
 
 		if(ok) {
 			return TerapiaResult.SUCCESS;
@@ -129,15 +123,16 @@ public class ModificaTerapiaController {
 			case INVALID_DATE_RANGE -> MessageUtils.showError(msg.toString());
 			case FAILURE -> MessageUtils.showError("Errore durante la creazione della terapia.");
 			case SUCCESS -> {
+				Sessione.getInstance().setTerapiaSelezionata(terapia);
 				MessageUtils.showSuccess("Terapia modificata con successo.");
-				Navigator.getInstance().switchToMostraDatiPaziente(event);
+				Navigator.getInstance().switchToMostraDettagliTerapia(event);
 			}
 		}
 	}
 	
+	// NAVIGAZIONE
 	@FXML
-	private void switchToMostraDatiPaziente(ActionEvent event) throws IOException {
-		Sessione.getInstance().nullTerapiaSelezionata();
-		Navigator.getInstance().switchToMostraDatiPaziente(event);
+	private void switchToMostraDettagliTerapia(ActionEvent event) throws IOException {
+		Navigator.getInstance().switchToMostraDettagliTerapia(event);
 	}
 }

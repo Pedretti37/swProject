@@ -1,16 +1,11 @@
 package application.controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Time;
-
-import application.admin.Amministratore;
-import application.admin.Database;
-import application.admin.Sessione;
 import application.model.Mail;
 import application.model.Utente;
+import application.service.AdminService;
+import application.utils.MessageUtils;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -35,49 +30,47 @@ public class VediMailController {
 	private void initialize() throws IOException {
 		u = Sessione.getInstance().getUtente();
 		m = Sessione.getInstance().getMailSelezionata();
-		
-		if(m.getMittente().equals(u.getMail())) {
-			mittenteLabel.setText(u.getMail());
-			destinatarioLabel.setText(m.getDestinatario());
-			rispondiButton.setDisable(true);
-		} else if(m.getDestinatario().equals(u.getMail())) {
-			mittenteLabel.setText(m.getMittente());
-			destinatarioLabel.setText(u.getMail());
-		}
-		oggettoLabel.setText(m.getOggetto());
-		corpoLabel.setText(m.getCorpo());
-		giornoOraLabel.setText(m.getGiorno() + ", " + m.getOrario());
-		
-		// segna come letta la mail corrispondente
-		if(!m.getLetta() && m.getDestinatario().equals(u.getMail())) {
-			String query = "UPDATE mail SET letta = ? WHERE mittente = ? AND orario = ?";
-	        try (Connection conn = Database.getConnection();
-	             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-	            stmt.setBoolean(1, true);
-	            stmt.setString(2, m.getMittente());
-	            stmt.setTime(3, Time.valueOf(m.getOrario()));
-
-	            int rows = stmt.executeUpdate();
-	            if (rows > 0) {
-	                Amministratore.loadMailFromDatabase();
-	            }
-	        } catch (SQLException ev) {
-	            ev.printStackTrace();
-	        }
-		}
+		if (m == null) {
+            MessageUtils.showError("Errore nel caricamento della mail.");
+            return;
+        }
+		
+		setUpInterfaccia();
+		gestioneLettura();
 	}
 	
+	private void setUpInterfaccia() {
+		mittenteLabel.setText(m.getMittente());
+		destinatarioLabel.setText(m.getDestinatario());
+		oggettoLabel.setText(m.getOggetto());
+		corpoLabel.setText(m.getCorpo());
+		giornoOraLabel.setText(m.getGiorno().format(AdminService.dateFormatter) + ", " + m.getOrario().format(AdminService.timeFormatter));
+
+		if(m.getMittente().equals(u.getMail())) { // se inviata da me
+			rispondiButton.setDisable(true);
+		} 
+	}
+
+	private void gestioneLettura() {
+		if(!m.getLetta() && m.getDestinatario().equalsIgnoreCase(u.getMail())) {
+            boolean ok = AdminService.mailDAO.vediMail(m);
+            if(ok) {
+                m.setLetta(true);
+            }
+        }
+	}
+
 	// NAVIGAZIONE
 	@FXML
 	private void switchToMailPage(ActionEvent event) throws IOException {
-		Sessione.getInstance().nullMailSelezionata();
+		Sessione.getInstance().setMailSelezionata(null);
 		Navigator.getInstance().switchToMailPage(event);
 	}
 	
 	@FXML
 	private void switchToRispondi(Event event) throws IOException {
-		Sessione.getInstance().nullMailSelezionata();
+		Sessione.getInstance().setMailSelezionata(null);
 		Navigator.getInstance().switchToRispondi(event, m.getMittente(), m.getOggetto());
 	}
 }

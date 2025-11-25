@@ -1,12 +1,14 @@
 package application.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import application.admin.Amministratore;
-import application.admin.MessageUtils;
-import application.admin.Sessione;
 import application.model.Mail;
 import application.model.Utente;
+import application.service.AdminService;
+import application.utils.MessageUtils;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +28,9 @@ public class MailController {
 	// --- SEZIONE VARIABILI LOCALI ---	
 	private Utente u;
 	private String nome_cognome;
-	
+	private List<Mail> mailRicevute = new ArrayList<>();
+	private List<Mail> mailInviate = new ArrayList<>();
+
 	// --- SEZIONE PAGINE ---
 	@FXML private VBox scriviPanel;
 	
@@ -51,35 +55,21 @@ public class MailController {
 	@FXML public void initialize() throws IOException{
 		u = Sessione.getInstance().getUtente();
 		
-		//Impostazione bottoneIndietro
-		if ("diabetologo".equals(u.getRuolo())) {
-    			bottoneIndietro.setOnAction(e -> {
-                try {
-                	Navigator.getInstance().switchToDiabetologoPage(e);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            });
-        } else if ("paziente".equals(u.getRuolo())) {
-        		Amministratore.diabetologi.stream()
-        			.filter(d -> d.getCf().equals(u.getDiabetologoRif()))
-        			.findFirst()
-        			.ifPresent(d -> {
-        				destinatarioField.setText(d.getMail());
-        			});
-        		bottoneIndietro.setOnAction(e -> {
-                try {
-                	Navigator.getInstance().switchToPazientePage(e);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            });
-        }
-		
+		caricaDati();
+
+		if (u.isPaziente()) {
+			AdminService.diabetologi.stream()
+				.filter(d -> d.getCf().equals(u.getDiabetologoRif()))
+				.findFirst()
+				.ifPresent(d -> {
+					destinatarioField.setText(d.getMail());
+				});
+		}
+
 		// MAIL RICEVUTE DI DEFAULT
 		showMailRicevute(null);
 		
-		mailNonLette.setText("Non lette: " + Amministratore.contatoreMailNonLette());
+		mailNonLette.setText("Non lette: " + AdminService.contatoreMailNonLette(mailRicevute));
 		
 		// VEDI UNA SPECIFICA MAIL
 		listaMail.setOnMouseClicked(e -> {
@@ -93,6 +83,11 @@ public class MailController {
 				}
 			}
 		});
+	} // FINE INITIALIZE ------------
+
+	private void caricaDati() {
+		mailInviate = AdminService.loadMailInviate(u);
+		mailRicevute = AdminService.loadMailRicevute(u);
 	}
 	
 	public enum MailResult {
@@ -106,15 +101,15 @@ public class MailController {
 			return MailResult.EMPTY_FIELDS;
 		}
 
-		boolean esiste = Amministratore.utenti.stream()
+		boolean esiste = AdminService.utenti.stream()
 			.anyMatch(d -> d.getMail().equals(destinatarioField.getText()));
 		if(!esiste) {
 			destinatarioField.clear();
 			return MailResult.INVALID_DATA;
 		}
 
-		if(u.getRuolo().equals("paziente")) {
-			boolean pToP = Amministratore.pazienti.stream()
+		if(u.isPaziente()) {
+			boolean pToP = AdminService.pazienti.stream()
 				.anyMatch(p -> p.getMail().equalsIgnoreCase(destinatarioField.getText()));
 			
 			if(pToP) {
@@ -124,7 +119,7 @@ public class MailController {
 		}
 
 		Mail mail = new Mail(0, u.getMail(), destinatario, oggetto, corpo, null, null, false);
-		boolean ok = Amministratore.mailDAO.scriviMail(mail);
+		boolean ok = AdminService.mailDAO.scriviMail(mail);
 		if(ok) {
 			return MailResult.SUCCESS;
 		}
@@ -141,6 +136,7 @@ public class MailController {
 			case INVALID_DATA -> MessageUtils.showError("Mail destinatario non valida.");
 			case FAILURE -> MessageUtils.showError("Errore nell'invio della mail.");
 			case SUCCESS -> {
+				mailInviate = AdminService.loadMailInviate(u);
 				MessageUtils.showSuccess("Mail inviata!");
 				hideCompose();
 			}
@@ -150,16 +146,13 @@ public class MailController {
 	
 	@FXML
 	private void showMailRicevute(ActionEvent e) throws IOException {
-		//Quando viene schiacciato il bottone ricevute
-		//rimane sulle mail ricevute
-		// Mail ricevute
-		listaMailRicevuteAsObservable = FXCollections.observableArrayList(
-		    Amministratore.mail.stream()
-		        .filter(m -> u.getMail().equals(m.getDestinatario()))
-		        .toList()
-		);
 
-		listaMail.setItems(listaMailRicevuteAsObservable);
+		// pulisco la search bar
+		searchMailBar.clear();
+
+		// Mail ricevute
+		listaMailRicevuteAsObservable = FXCollections.observableArrayList(mailRicevute);
+		listaMail.setItems(FXCollections.observableArrayList(mailRicevute));
 
 		// CELL FACTORY: mail non lette in grassetto + sfondo diverso
 		listaMail.setCellFactory(event -> new ListCell<Mail>() {
@@ -170,7 +163,7 @@ public class MailController {
 		            setText(null);
 		            setStyle("");
 		        } else {
-		        	nome_cognome = Amministratore.utenti.stream()
+		        	nome_cognome = AdminService.utenti.stream()
 		        		.filter(p -> p.getMail().equals(mail.getMittente()))
 		        		.map(Utente::getNomeCognome)
 		        		.findFirst()
@@ -198,15 +191,12 @@ public class MailController {
 
 	@FXML
 	private void showMailInviate(ActionEvent e) throws IOException {
-		//Quando schiaccia il bottone inviate
-		//passa alle mail inviate
-		// Mail inviate
-		listaMailInviateAsObservable = FXCollections.observableArrayList(
-		    Amministratore.mail.stream()
-		        .filter(m -> u.getMail().equals(m.getMittente()))
-		        .toList()
-		);
+		
+		// pulisco search bar
+		searchMailBar.clear();
 
+		// Mail inviate
+		listaMailInviateAsObservable = FXCollections.observableArrayList(mailInviate);
 		listaMail.setItems(listaMailInviateAsObservable);
 
 		// CELL FACTORY: mail non lette in grassetto + sfondo diverso
@@ -218,7 +208,7 @@ public class MailController {
 		            setText(null);
 		            setStyle("");
 		        } else {
-		        	nome_cognome = Amministratore.utenti.stream()
+		        	nome_cognome = AdminService.utenti.stream()
 		        		.filter(p -> p.getMail().equals(mail.getDestinatario()))
 		        		.map(Utente::getNomeCognome)
 		        		.findFirst()
@@ -262,12 +252,13 @@ public class MailController {
     public void rispondi(String mail, String oggetto) {
 		destinatarioField.clear();
 		destinatarioField.setText(mail);
-		oggettoField.setText(oggetto);
+		oggettoField.clear();
+		oggettoField.setText("Re: " + oggetto);
 		showCompose();
     }
 
 	private void setFilteredList(FilteredList<Mail> filteredMail) {
-		// ✅ collega la lista filtrata alla ListView
+		// collega la lista filtrata alla ListView
 		listaMail.setItems(filteredMail);
 
 		searchMailBar.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -277,14 +268,14 @@ public class MailController {
 
 		        String filtro = newValue.toLowerCase();
 
-		        // 🔹 Nome mittente
-		        String nomeMittente = Amministratore.utenti.stream()
+		        // Nome mittente
+		        String nomeMittente = AdminService.utenti.stream()
 					.filter(p -> p.getMail().equals(mail.getMittente()))
 					.map(Utente::getNomeCognome)
 					.findFirst()
 					.orElse("");
 
-		        // 🔹 Condizioni di ricerca
+		        // Condizioni di ricerca
 		        String oggetto = mail.getOggetto() != null ? mail.getOggetto().toLowerCase() : "";
 		        String corpo = mail.getCorpo() != null ? mail.getCorpo().toLowerCase() : "";
 
@@ -293,5 +284,21 @@ public class MailController {
 		            || corpo.contains(filtro);
 		    });
 		});	
+	}
+
+	private void clearAll() {
+		mailInviate.clear();
+		mailRicevute.clear();
+	}
+
+	// NAVIGAZIONE
+	@FXML
+	private void indietro(ActionEvent event) throws IOException {
+		clearAll();
+		if (u.isDiabetologo()) {
+			Navigator.getInstance().switchToDiabetologoPage(event);
+        } else if (u.isPaziente()) {
+			Navigator.getInstance().switchToPazientePage(event);
+        }
 	}
 }

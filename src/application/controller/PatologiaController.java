@@ -2,9 +2,9 @@ package application.controller;
 
 import java.io.IOException;
 
-import application.admin.Amministratore;
-import application.admin.Sessione;
 import application.model.Patologia;
+import application.service.AdminService;
+import application.utils.Sessione;
 import application.view.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,10 +24,10 @@ public class PatologiaController {
 		patologia = Sessione.getInstance().getPatologiaSelezionata();
 		
 		nomeLabel.setText(patologia.getNome());
-		dataLabel.setText(patologia.getInizio().format(Amministratore.dateFormatter));
+		dataLabel.setText(patologia.getInizio().format(AdminService.dateFormatter));
 		indicazioniLabel.setText(patologia.getIndicazioni());
 		
-		Amministratore.diabetologi.stream()
+		AdminService.diabetologi.stream()
 			.filter(d -> d.getCf().equals(patologia.getModificato()))
 			.findFirst()
 			.ifPresent(d -> {
@@ -38,7 +38,7 @@ public class PatologiaController {
 	// NAVIGAZIONE
 	@FXML
 	private void switchToMostraDatiPaziente(ActionEvent event) throws IOException {
-		Sessione.getInstance().nullPatologiaSelezionata();
+		Sessione.getInstance().setPatologiaSelezionata(null);
 		Navigator.getInstance().switchToMostraDatiPaziente(event);
 	}
 }
