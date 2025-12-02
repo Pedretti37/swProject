@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -30,6 +31,9 @@ public class Navigator {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+		stage.setTitle("Software per pazienti diabetici");
+		Image icon = new Image(getClass().getResourceAsStream("/resources/logo.png"));
+		stage.getIcons().add(icon);
     }
 	
 	//---------------------------------------------------------------
@@ -87,18 +91,14 @@ public class Navigator {
 	}
 	
 	//----------------------------------------------------------------------
-	public void switchToNuovaTerapia(ActionEvent event) throws IOException {
+	public void switchToTerapia(ActionEvent event) throws IOException {
 		loadScene("/resources/fxml/NuovaTerapia.fxml");
 	}
 	
 	public void switchToMostraDettagliTerapia(Event event) throws IOException {
 		loadScene("/resources/fxml/MostraDettagliTerapia.fxml");
 	}
-	
-	public void switchToModificaTerapia(ActionEvent event) throws IOException {
-		loadScene("/resources/fxml/ModificaTerapia.fxml");
-	}
-	
+
 	//----------------------------------------------------------------------------
 	public void switchToStoriaDatiPaziente(ActionEvent event) throws IOException {
 		loadScene("/resources/fxml/StoriaDatiPaziente.fxml");
@@ -116,15 +116,16 @@ public class Navigator {
 		if(stage == null) {
 			MessageUtils.showError("Stage non impostato.");
 		}
-		
-        stage.setScene(new Scene(root));
-        stage.show();
-        
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX(screenBounds.getMinX());
-        stage.setY(screenBounds.getMinY());
-        stage.setWidth(screenBounds.getWidth());
-        stage.setHeight(screenBounds.getHeight());
-        stage.setMaximized(true);
+		else {
+			stage.setScene(new Scene(root));
+			stage.show();
+			
+			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+			stage.setX(screenBounds.getMinX());
+			stage.setY(screenBounds.getMinY());
+			stage.setWidth(screenBounds.getWidth());
+			stage.setHeight(screenBounds.getHeight());
+			stage.setMaximized(true);
+		}
     }
 }
