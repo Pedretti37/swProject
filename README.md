@@ -30,4 +30,6 @@ Il sistema, inoltre, segnala ai medici tutti i pazienti che registrano glicemie 
 
 I responsabili del servizio inseriscono i dati iniziali di pazienti e medici, necessari per l’autenticazione.
 
-Per ogni paziente è specificato un medico di riferimento, al quale il paziente può inviare email per richieste e domande varie. Ogni medico può vedere e aggiornare i dati di ogni paziente. Il sistema provvederà a tenere traccia di quale medico ha effettuato le varie operazioni.
+Per ogni paziente è specificato un medico di riferimento, al quale il paziente può inviare email per richieste e domande varie.
+
+Ogni medico può vedere e aggiornare i dati di ogni paziente. Il sistema provvederà a tenere traccia di quale medico ha effettuato le varie operazioni.
