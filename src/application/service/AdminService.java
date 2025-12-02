@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import application.dao.impl.FattoriComorbiditàAllergieDAO;
 import application.dao.impl.GlicemiaDAO;
 import application.dao.impl.MailDAO;
 import application.dao.impl.PatologiaDAO;
+import application.dao.impl.PesoDAO;
 import application.dao.impl.QuestionarioDAO;
 import application.dao.impl.TerapiaConcomitanteDAO;
 import application.dao.impl.TerapiaDAO;
@@ -17,10 +19,14 @@ import application.model.FattoriComorbiditàAllergie;
 import application.model.Glicemia;
 import application.model.Mail;
 import application.model.Patologia;
+import application.model.Peso;
 import application.model.Questionario;
 import application.model.Terapia;
 import application.model.TerapiaConcomitante;
 import application.model.Utente;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 
 public class AdminService {
 	
@@ -28,20 +34,22 @@ public class AdminService {
 	public static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 	
 	// LISTE
-	public static List<Utente> utenti = new ArrayList<>();
+	public static final List<Utente> utenti = new ArrayList<>();
 	public static List<Utente> pazienti = new ArrayList<>();
 	public static List<Utente> diabetologi = new ArrayList<>();
 
     // DAO
-    public static final TerapiaDAO terapiaDAO = new TerapiaDAO();
-    public static final UtenteDAO utenteDAO = new UtenteDAO();
-	public static final FattoriComorbiditàAllergieDAO fattoriComorbiditàAllergieDAO = new FattoriComorbiditàAllergieDAO();
-	public static final PatologiaDAO patologiaDAO = new PatologiaDAO();
-	public static final TerapiaConcomitanteDAO terapiaConcomitanteDAO = new TerapiaConcomitanteDAO();
-	public static final GlicemiaDAO glicemiaDAO = new GlicemiaDAO();
-	public static final MailDAO mailDAO = new MailDAO();
-	public static final QuestionarioDAO questDAO = new QuestionarioDAO();
+    private static final TerapiaDAO terapiaDAO = new TerapiaDAO();
+    private static final UtenteDAO utenteDAO = new UtenteDAO();
+	private static final FattoriComorbiditàAllergieDAO fattoriComorbiditàAllergieDAO = new FattoriComorbiditàAllergieDAO();
+	private static final PatologiaDAO patologiaDAO = new PatologiaDAO();
+	private static final TerapiaConcomitanteDAO terapiaConcomitanteDAO = new TerapiaConcomitanteDAO();
+	private static final GlicemiaDAO glicemiaDAO = new GlicemiaDAO();
+	private static final MailDAO mailDAO = new MailDAO();
+	private static final QuestionarioDAO questDAO = new QuestionarioDAO();
+	private static final PesoDAO pesoDAO = new PesoDAO();
 
+	// ---------------------------------
 	// CARICA UTENTI DAL DATABASE
 	public static void loadAllUtenti() {
 	    utenti.clear();
@@ -50,79 +58,160 @@ public class AdminService {
 		creaListe();
 	}
 	
+	// -------------------------------------------
+	// CREA TERAPIA
+	public static boolean creaTerapia(Terapia t) {
+		return terapiaDAO.creaTerapia(t);
+	}
+	// MODIFICA TERAPIA
+	public static boolean modificaTerapia(Terapia t) {
+		return terapiaDAO.modificaTerapia(t);
+	}
+	// ELIMINA TERAPIA
+	public static boolean eliminaTerapia(Terapia t) {
+		return terapiaDAO.eliminaTerapia(t);
+	}
+	// NOTIFICA TERAPIA
+	public static boolean notificaTerapia(Terapia t) {
+		return terapiaDAO.notificaTerapia(t);
+	}
 	// CARICA TERAPIE DI UN PAZIENTE DAL DATABASE
 	public static List<Terapia> loadTerapieByPaziente(Utente paziente) {
 		return terapiaDAO.getTerapieByPaziente(paziente);
 	}
-
 	// CARICA NUMERO DI TERAPIE ATTIVE PER PAZIENTE IN UNA CERTA DATA
 	public static int loadTerapieAttiveByCfAndData(String cf, LocalDate data) {
 		return terapiaDAO.getNumeroTerapieAttive(cf, data);
 	}
-
 	// CARICA NUMERO DI TERAPIE SODDISFATTE PER PAZIENTE IN UNA CERTA DATA
 	public static int loadTerapieSoddisfatteByCfAndData(String cf, LocalDate data) {
 		return terapiaDAO.getTerapieSoddisfatte(cf, data);
 	}
 
+	// -----------------------------------------------
+	// CARICA MISURAZIONI PESO DI UN PAZIENTE
+	public static List<Peso> loadPesoByCf(String cf) {
+		return pesoDAO.getPesoByCf(cf);
+	}
+	// AGGIORNA PESO
+	public static boolean aggiornaPeso(Peso p) {
+		return pesoDAO.aggiornaPeso(p);
+	}
+	// CREA PESO
+	public static boolean creaPeso(Peso p) {
+		return pesoDAO.creaPeso(p);
+	}
+
+	// -------------------------------------------------------------------------------------------------------
 	// CARICA STORIA DATI DAL DATABASE
 	public static List<FattoriComorbiditàAllergie> loadFattoriComorbiditàAllergieByPaziente(Utente paziente) {
 		return fattoriComorbiditàAllergieDAO.getFattoriComorbiditàAllergieByPaziente(paziente);
 	}
-	
+	// CREA DATO
+	public static boolean creaFattoreComorbiditàAllergia(FattoriComorbiditàAllergie fca) {
+		return fattoriComorbiditàAllergieDAO.creaFattoreComorbiditàAllergia(fca);
+	}
+	// ELIMINA DATO
+	public static boolean eliminaFattoreComorbiditàAllergia(FattoriComorbiditàAllergie fca) {
+		return fattoriComorbiditàAllergieDAO.eliminaFattoreComorbiditàAllergia(fca);
+	}
+
+	// -------------------------------------------------------------------
 	// CARICA GLICEMIA DI UN PAZIENTE DAL DATABASE
 	public static List<Glicemia> loadGlicemiaByPaziente(Utente paziente) {
 		return glicemiaDAO.getGlicemiaByPaziente(paziente);
 	}
-
+	// CREA GLICEMIA
+	public static boolean creaGlicemia(Glicemia g) {
+		return glicemiaDAO.creaGlicemia(g);
+	}
 	// CARICA TUTTE LE GLICEMIE DAL DATABASE
 	public static List<Glicemia> loadAllGlicemia() {
 		return glicemiaDAO.getAllGlicemia();
 	}
 	
-	//CARICA MAIL RICEVUTE DAL DATABASE
+	// -------------------------------------------------------
+	// CARICA MAIL RICEVUTE DAL DATABASE
 	public static List<Mail> loadMailRicevute(Utente utente) {
 		return mailDAO.getMailRicevute(utente);
 	}
-
-	//CARICA MAIL INVIATE DAL DATABASE
+	// CARICA MAIL INVIATE DAL DATABASE
 	public static List<Mail> loadMailInviate(Utente utente) {
 		return mailDAO.getMailInviate(utente);
 	}
-	
+	// SEGNA MAIL COME LETTA
+	public static boolean vediMail(Mail m) {
+		return mailDAO.vediMail(m);
+	}
+	// SCRIVI MAIL
+	public static boolean scriviMail(Mail m) {
+		return mailDAO.scriviMail(m);
+	}
+
+	// ---------------------------------------------------------------------
 	// CARICA PATOLOGIE DAL DATABASE
 	public static List<Patologia> loadPatologieByPaziente(Utente paziente) {
 		return patologiaDAO.getPatologieByPaziente(paziente);
 	}
-	
+	// CREA PATOLOGIA
+	public static boolean creaPatologia(Patologia p) {
+		return patologiaDAO.creaPatologia(p);
+	}
+	// ELIMINA PATOLOGIA
+	public static boolean eliminaPatologia(Patologia p) {
+		return patologiaDAO.eliminaPatologia(p);
+	}
+
+	// -----------------------------------------------------------------------------------------
 	// CARICA TERAPIE CONCOMITANTI DAL DATABASE
 	public static List<TerapiaConcomitante> loadTerapieConcomitantiByPaziente(Utente paziente) {
 		return terapiaConcomitanteDAO.getTerapieConcomitantiByPaziente(paziente);
 	}
-	
+	// CREA TERAPIA CONCOMITANTE
+	public static boolean creaTerapiaConcomitante(TerapiaConcomitante tc) {
+		return terapiaConcomitanteDAO.creaTerapiaConcomitante(tc);
+	}
+	// ELIMINA TERAPIA CONCOMITANTE
+	public static boolean eliminaTerapiaConcomitante(TerapiaConcomitante tc) {
+		return terapiaConcomitanteDAO.eliminaTerapiaConcomitante(tc);
+	}
+
+	// --------------------------------------------------------------------------
 	// CARICA QUESTIONARI DI UN PAZIENTE DAL DATABASE
 	public static List<Questionario> loadQuestionariByPaziente(Utente paziente) {
 		return questDAO.getQuestionariByPaziente(paziente);
 	}
-
 	// CARICA TUTTI I QUESTIONARI NON CONFORMI DAL DATABASE
 	public static List<Questionario> loadQuestionariNonConformi() {
 		return questDAO.getQuestionariNonConformi();
 	}
-	
-	// CREA LISTE PAZIENTI E DIABETOLOGI
+	// SEGNA QUESTIONARIO COME CONTROLLATO
+	public static boolean segnaComeControllato(Questionario q) {
+		return questDAO.segnaComeControllato(q);
+	}
+	// CREA QUESTIONARIO
+	public static boolean creaQuestionario(Questionario q) {
+		return questDAO.creaQuestionario(q);
+	}
+	// ESISTE QUESTIONARIO OGGI
+	public static boolean esisteQuestionarioOggi(int terapiaId) {
+		return questDAO.esisteQuestionarioOggi(terapiaId);
+	}
+
+	// ----------------------------
+	// LISTE PAZIENTI E DIABETOLOGI
 	public static void creaListe(){
 		pazienti = utenti.stream()
-				.filter(utente -> utente.getRuolo().equals("paziente"))
+				.filter(utente -> utente.isPaziente())
 				.toList();
 		diabetologi = utenti.stream()
-				.filter(utente -> utente.getRuolo().equals("diabetologo"))
+				.filter(utente -> utente.isDiabetologo())
 				.toList();
 	}
 
-	//------------------------------------------
+	//---------------------------------------------
 	// METODI DI ACCESSO RAPIDO
-	//------------------------------------------
+	//---------------------------------------------
 
 	// CONTROLLO ESISTENZA UTENTE
 	public static boolean utenteEsiste(String cf) {
@@ -153,4 +242,42 @@ public class AdminService {
 				.filter(mail -> !mail.getLetta())
 				.count();
 	}
+
+	// PROPRIETA' GRAFICO GLICEMIA
+	public static XYChart.Data<String, Number> proprietàPunto(XYChart.Data<String, Number> punto, int valore, String indicazioni) {
+		punto.nodeProperty().addListener((obs, oldNode, newNode) -> {
+			if (newNode != null) {
+				if(indicazioni.equals("Pre pasto")) {
+					if(valore < 80 || valore > 130)
+						newNode.setStyle("-fx-background-color: red;");
+					else
+						newNode.setStyle("-fx-background-color: green;");
+				} else if(indicazioni.equals("Post pasto")) {
+					if(valore > 180)
+						newNode.setStyle("-fx-background-color: red;");
+					else
+						newNode.setStyle("-fx-background-color: green;");
+				}
+			}
+		});
+					
+		return punto;
+	}
+
+	// CELL FACTORY GENERICO
+	public static <T> void setCustomCellFactory(ListView<T> listView, Function<T, String> textExtractor) {
+		listView.setCellFactory(param -> new ListCell<T>() {
+			protected void updateItem(T item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				if (empty || item == null) {
+					setText(null);
+					setStyle("");
+				} else {
+					setText(textExtractor.apply(item)); 
+				}
+			}
+		});
+	}
+
 }
