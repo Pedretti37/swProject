@@ -62,7 +62,7 @@ public class GlicemiaDAO implements application.dao.interfaces.GlicemiaDAOinterf
 
 	public List<Glicemia> getGlicemiaByPaziente(Utente p) {
 		List<Glicemia> lista = new ArrayList<>();
-		String query = "SELECT * FROM glicemia WHERE CF = ? ORDER BY giorno DESC, orario ASC";
+		String query = "SELECT * FROM glicemia WHERE CF = ? ORDER BY giorno ASC, orario ASC";
 		try (Connection conn = Database.getConnection();
 			PreparedStatement stmt = conn.prepareStatement(query)) {
 

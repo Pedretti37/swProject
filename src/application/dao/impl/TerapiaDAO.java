@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class TerapiaDAO implements application.dao.interfaces.TerapiaDAOinterfac
         // Implementazione del metodo per creare una terapia nel database
         String query = "INSERT INTO terapie (CF, nomeFarmaco, dosiGiornaliere, quantità, dataInizio, dataFine, indicazioni, diabetologo, visualizzata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (Connection conn = Database.getConnection(); 
-			PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+			PreparedStatement stmt = conn.prepareStatement(query)) {
 
 			stmt.setString(1, t.getCf());
 			stmt.setString(2, t.getNomeFarmaco());
@@ -68,7 +67,7 @@ public class TerapiaDAO implements application.dao.interfaces.TerapiaDAOinterfac
 
     public boolean modificaTerapia(Terapia t) {
         // Implementazione del metodo per modificare una terapia nel database
-        String query = "UPDATE terapie SET dosiGiornaliere = ?, quantità = ?, dataInizio = ?, dataFine = ?, indicazioni = ?, diabetologo = ? WHERE id = ?";
+        String query = "UPDATE terapie SET dosiGiornaliere = ?, quantità = ?, dataInizio = ?, dataFine = ?, indicazioni = ?, diabetologo = ?, visualizzata = ? WHERE id = ?";
 		try (Connection conn = Database.getConnection(); 
 			PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -78,7 +77,8 @@ public class TerapiaDAO implements application.dao.interfaces.TerapiaDAOinterfac
 	        stmt.setDate(4, java.sql.Date.valueOf(t.getDataFine()));
 	        stmt.setString(5, t.getIndicazioni());
 	        stmt.setString(6, t.getDiabetologo());
-	        stmt.setInt(7, t.getId());
+			stmt.setBoolean(7, false);
+	        stmt.setInt(8, t.getId());
 	        
 	        int rows = stmt.executeUpdate();
 	        if (rows > 0) {

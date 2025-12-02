@@ -152,6 +152,4 @@ public class QuestionarioDAO implements application.dao.interfaces.QuestionarioD
 			return false;
 		}
 	}
-
-
 }
