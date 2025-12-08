@@ -57,7 +57,10 @@
                </padding>
                <children>
                   <Label styleClass="card-title" text="Bentornato/a" />
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../profilo.jpg" />
+                     </image></ImageView>
                   <Label style="-fx-text-fill: #777;" text="Accedi al tuo account Glicocare" />
                   
                   <VBox spacing="15.0">
