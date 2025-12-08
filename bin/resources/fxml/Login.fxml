@@ -5,30 +5,72 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="800.0" prefWidth="1280.0" stylesheets="@../css/LoginPage.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.LoginController">
-    
-    <center>
-        <VBox alignment="CENTER" maxWidth="340.0" minWidth="300.0" spacing="25.0" stylesheets="@../css/LoginPage.css" BorderPane.alignment="CENTER">
+<HBox fx:id="mainPane" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../css/LoginPage.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.LoginController">
+   <children>
+      
+      <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #f0f4f8;" HBox.hgrow="ALWAYS">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+         <children>
+            <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="file:/C:/Users/Mattia/cartelleGit/swProject/src/resources/logo-no-sfondo.png" />
+               </image>
+            </ImageView>
+            
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label fx:id="firstLabel" style="-fx-font-size: 32px; -fx-font-weight: bold;" text="GLICOCARE" />
+                  <Label style="-fx-font-size: 16px; -fx-text-fill: gray;" text="Applicazione per interagire con il proprio diabetologo" wrapText="true" />
+               </children>
+            </VBox>
 
-            <Label fx:id="firstLabel" stylesheets="@../css/LoginPage.css" text="Bentornato/a!">
-                <font>
-                    <Font name="System Bold" size="32.0" />
-                </font>
-                <VBox.margin>
-                    <Insets bottom="15.0" />
-                </VBox.margin>
-            </Label>
-            
-            <TextField fx:id="cfField" promptText="Codice Fiscale" stylesheets="@../css/LoginPage.css" />
-            
-            <PasswordField fx:id="passwordField" promptText="Password" stylesheets="@../css/LoginPage.css" />
-            
-            <Button defaultButton="true" maxWidth="1.7976931348623157E308" onAction="#handleLogin" stylesheets="@../css/LoginPage.css" text="Accedi" />
+            <HBox alignment="CENTER" spacing="30.0">
+               <children>
+                  <ImageView fitHeight="350.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Mattia/cartelleGit/swProject/src/resources/diabetologo.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="350.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Mattia/cartelleGit/swProject/src/resources/paziente.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
 
-        </VBox>
-    </center>
-</BorderPane>
+      <StackPane prefWidth="450.0" style="-fx-background-color: #f0f4f8;">
+         <children>
+            <VBox alignment="CENTER" maxWidth="350.0" spacing="20.0" styleClass="card">
+               <padding>
+                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+               </padding>
+               <children>
+                  <Label styleClass="card-title" text="Bentornato/a" />
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label style="-fx-text-fill: #777;" text="Accedi al tuo account Glicocare" />
+                  
+                  <VBox spacing="15.0">
+                     <children>
+                        <TextField fx:id="cfField" promptText="Codice fiscale" styleClass="input-field" />
+                        <PasswordField fx:id="passwordField" promptText="Password" styleClass="input-field" />
+                     </children>
+                  </VBox>
+                  
+                  <Button defaultButton="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleLogin" styleClass="login-button" text="Accedi" />
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</HBox>
