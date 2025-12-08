@@ -2,75 +2,125 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.DiabetologoController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" styleClass="main-background" stylesheets="@../css/DiabetoloPage.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.DiabetologoController">
 
     <top>
-        <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-            <children>
-                <Label fx:id="welcomeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Pannello Diabetologo">
-                    <font>
-                        <Font name="System Bold" size="32.0" />
-                    </font>
-                </Label>
-            </children>
+        <HBox alignment="CENTER_LEFT" prefHeight="80.0" styleClass="navbar" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" top="15.0" />
+                <Insets left="20.0" right="20.0" />
             </padding>
-        </VBox>
+            <children>
+                <VBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label styleClass="brand-label" text="PORTALE DIABETOLOGO" />
+                        <Label fx:id="welcomeLabel" styleClass="welcome-sublabel" text="Benvenuto, Dottore" />
+                    </children>
+                </VBox>
+                
+                <Region HBox.hgrow="ALWAYS" />
+                
+                <HBox alignment="CENTER" spacing="15.0">
+                    <children>
+                        <Button fx:id="mailButton" mnemonicParsing="false" onAction="#switchToMailPage" styleClass="btn-action" text="🖂 Mail" />
+                        <Separator orientation="VERTICAL" prefHeight="20.0" />
+                        <Button mnemonicParsing="false" onAction="#switchToLogin" styleClass="btn-logout" text="🚪 Logout" />
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
     </top>
 
     <center>
-        <VBox alignment="TOP_CENTER" spacing="15.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="20.0" left="40.0" right="40.0" top="15.0" />
-            </padding>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane-transparent" BorderPane.alignment="CENTER">
+            <content>
+                <VBox spacing="25.0">
+                    <padding>
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                    </padding>
+                    <children>
+                        
+                        <VBox styleClass="card">
+                            <children>
+                                <Label styleClass="section-title" text="👤 I Tuoi Pazienti" />
+                                <Label styleClass="section-subtitle" text="Seleziona un paziente per accedere alla cartella clinica" />
+                                <ListView fx:id="listaNomiPazienti" prefHeight="200.0" styleClass="modern-list-view" />
+                            </children>
+                        </VBox>
 
-            <HBox alignment="CENTER">
-                <ButtonBar>
-                    <buttons>
-                        <Button fx:id="mailButton" onAction="#switchToMailPage" prefWidth="120.0" text="✉️ Mail" />
-                        <Button onAction="#switchToLogin" prefWidth="120.0" style="-fx-background-color: #ff6666;" text="🚪 Logout" />
-                    </buttons>
-                </ButtonBar>
-            </HBox>
+                        <HBox spacing="20.0">
+                            <children>
+                                <VBox styleClass="card-warning" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label styleClass="icon-label" text="🚨" />
+                                                <Label styleClass="section-title-warning" text="Glicemie Fuori Range" />
+                                            </children>
+                                        </HBox>
+                                        <ListView fx:id="listaGlicemieSballate" prefHeight="150.0" styleClass="modern-list-view" />
+                                    </children>
+                                </VBox>
 
-            <Label style="-fx-font-size: 16pt; -fx-font-weight: bold;" text="👤 Lista Pazienti (Seleziona per vedere i dettagli)" />
-            <ListView fx:id="listaNomiPazienti" minHeight="100.0" prefHeight="250.0" VBox.vgrow="ALWAYS" />
+                                <VBox styleClass="card-info" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label styleClass="icon-label" text="📝" />
+                                                <Label styleClass="section-title-info" text="Questionari da Revisionare" />
+                                            </children>
+                                        </HBox>
+                                        <ListView fx:id="listaQuestNonConformi" prefHeight="150.0" styleClass="modern-list-view" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
 
-            <Label style="-fx-font-size: 16pt; -fx-font-weight: bold; -fx-text-fill: #cc0000;" text="🚨 Glicemie Fuori Range" />
-            <ListView fx:id="listaGlicemieSballate" minHeight="80.0" prefHeight="150.0" VBox.vgrow="ALWAYS" />
-
-            <Label style="-fx-font-size: 16pt; -fx-font-weight: bold; -fx-text-fill: #ff9900;" text="📝 Questionari Non Conformi (da revisionare)" />
-            <ListView fx:id="listaQuestNonConformi" minHeight="80.0" prefHeight="150.0" VBox.vgrow="ALWAYS" />
-        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
     </center>
 
     <right>
-        <VBox alignment="TOP_CENTER" prefHeight="827.0" prefWidth="401.0" spacing="15.0" style="-fx-background-color: #f7f7f7; -fx-border-color: #ddd; -fx-border-width: 0 0 0 1;">
+        <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="20.0" styleClass="sidebar" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                <Insets bottom="20.0" left="20.0" right="20.0" top="40.0" />
             </padding>
-            <Label style="-fx-font-size: 18pt; -fx-font-weight: bold; -fx-padding: 0 0 5 0;" text="Il Mio Profilo" />
-            
-            <ImageView fx:id="fotoProfilo" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: lightgray; -fx-border-width: 1; -fx-background-color: white;" />
-            
-            <VBox alignment="CENTER_LEFT" spacing="8.0">
-                <padding>
-                    <Insets top="10.0" />
-                </padding>
-                <Label fx:id="nomeLabel" style="-fx-font-size: 16pt; -fx-font-weight: bold;" text="[Nome Cognome Diabetologo]" />
-                <Label fx:id="ddnLabel" text="Data di Nascita: " />
-                <Label fx:id="sessoLabel" text="Sesso: " />
-            </VBox>
+            <children>
+                <Label styleClass="sidebar-title" text="PROFILO PERSONALE" />
+                
+                <ImageView fx:id="fotoProfilo" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-image" />
+                
+                <VBox alignment="CENTER" spacing="5.0">
+                    <children>
+                        <Label fx:id="nomeLabel" styleClass="profile-name" text="Dr. Mario Rossi" textAlignment="CENTER" wrapText="true" />
+                        <Separator prefWidth="200.0">
+                            <VBox.margin>
+                                <Insets bottom="10.0" top="10.0" />
+                            </VBox.margin>
+                        </Separator>
+                        <HBox alignment="CENTER" spacing="5.0">
+                            <Label styleClass="profile-label" text="Data di Nascita:" />
+                            <Label fx:id="ddnLabel" styleClass="profile-value" text="01/01/1980" />
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="5.0">
+                            <Label styleClass="profile-label" text="Sesso:" />
+                            <Label fx:id="sessoLabel" styleClass="profile-value" text="M" />
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
         </VBox>
     </right>
+
 </BorderPane>
