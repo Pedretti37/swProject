@@ -78,9 +78,9 @@ public class DiabetologoController {
 		welcomeLabel.setText("Ciao, " + d.getNomeCognome());
 		welcomeLabel.setFocusTraversable(true);
 
-		nomeLabel.setText("Nome e cognome: " + d.getNomeCognome());
-		ddnLabel.setText("Data di nascita: " + d.getDataDiNascita().format(AdminService.dateFormatter));
-		sessoLabel.setText("Sesso: " + d.getSesso());
+		nomeLabel.setText(d.getNomeCognome());
+		ddnLabel.setText(d.getDataDiNascita().format(AdminService.dateFormatter));
+		sessoLabel.setText(d.getSesso());
 		Image image = new Image(d.getFoto());
 		fotoProfilo.setImage(image);
 		
